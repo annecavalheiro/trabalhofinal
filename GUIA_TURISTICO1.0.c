@@ -330,6 +330,37 @@ void show_details(int id){
     else printf("Nenhuma avaliação ainda.\n");
 }
 
+void show_top_rated(int topN){
+    double avg[MAX_DEST];
+    int cnt[MAX_DEST];
+    for (int i=0;i<n_dest;i++){ avg[i]=0.0; cnt[i]=0; }
+    for (int i=0;i<n_ratings;i++){
+        int id = ratings[i].dest_id;
+        if (id>=0 && id < n_dest){ avg[id] += ratings[i].rating; cnt[id]++; }
+    }
+    for (int i=0;i<n_dest;i++){
+        if (cnt[i]>0) avg[i] = avg[i]/cnt[i]; else avg[i]=0.0;
+    }
+    int used[MAX_DEST] = {0};
+    int printed = 0;
+    printf("\n--- Top %d por avaliação ---\n", topN);
+    for (int k=0; k<topN; k++){
+        int best = -1; double bestAvg = -1.0; int bestCnt = 0;
+        for (int i=0;i<n_dest;i++){
+            if (used[i]) continue;
+            if (cnt[i]==0) continue;
+            if (avg[i] > bestAvg || (avg[i]==bestAvg && cnt[i] > bestCnt)){
+                best = i; bestAvg = avg[i]; bestCnt = cnt[i];
+            }
+        }
+        if (best == -1) break;
+        used[best] = 1;
+        printf("%d) %s — Média: %.2f (%d avaliações)\n", k+1, dests[best].name, bestAvg, bestCnt);
+        printed++;
+    }
+    if (printed == 0) printf("Nenhuma avaliação disponível para gerar o ranking.\n");
+}
+
 /* ---------- usuários / registro / busca ---------- */
 
 int find_user_by_username(const char *uname){
@@ -526,6 +557,7 @@ void menu(){
         printf("7) Eventos futuros (listar/adicionar)\n");
         printf("8) Exportar para CSV (canva_export.csv)\n");
         printf("9) Listar avaliações de um local\n");
+        printf("10) Top 3 por avaliação\n");
         printf("0) Sair\n");
         printf("Escolha: ");
         if (scanf("%d", &opt) != 1){ while(getchar()!='\n'); opt=-1; }
@@ -562,6 +594,7 @@ void menu(){
         }
         else if (opt==8) export_canva("canva_export.csv");
         else if (opt==9) list_reviews_for_place();
+        else if (opt==10) show_top_rated(3);
         else if (opt==0) printf("Saindo...\n");
         else printf("Opção inválida.\n");
     }

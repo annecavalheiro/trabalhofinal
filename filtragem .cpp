@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// CÛdigos ANSI para cores
+// C√≥digos ANSI para cores
 #define RESET "\033[0m"
 #define GREEN "\033[1;32m"
 #define RED   "\033[1;31m"
@@ -14,7 +14,7 @@ typedef struct {
     char localizacao[100];
     char onibus[100];
     char dica[200];
-    int perigoso; // 1 = sim, 0 = n„o
+    int perigoso; // 1 = sim, 0 = n√£o
 } Ponto;
 
 int main() {

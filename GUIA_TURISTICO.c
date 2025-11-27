@@ -99,19 +99,19 @@ int main() {
             printf("                                                                    #                \n");
             printf("                                                                    #                \n");
 
-            printf("                                            "RED""GREEN"                     "RED""GREEN"                  \n");
-            printf("                                           "RED""GREEN" "RED""GREEN"                   "RED"*"GREEN"                   \n");
-            printf("                                          "RED""GREEN"   "RED""GREEN"                 "RED"*"GREEN"                    \n");
-            printf("                                         "RED""GREEN"     "RED""GREEN"               "RED"*"GREEN"                     \n");
-            printf("                                        "RED""GREEN"       "RED""GREEN"             "RED"*"GREEN"                      \n");
-            printf("                                       "RED""GREEN"         "RED""GREEN"           "RED"*"GREEN"                       \n");
+            printf("                                            "RED"*"GREEN"                     "RED"*"GREEN"                  \n");
+            printf("                                           "RED"*"GREEN" "RED"*"GREEN"                   "RED"*"GREEN"                   \n");
+            printf("                                          "RED"*"GREEN"   "RED"*"GREEN"                 "RED"*"GREEN"                    \n");
+            printf("                                         "RED"*"GREEN"     "RED"*"GREEN"               "RED"*"GREEN"                     \n");
+            printf("                                        "RED"*"GREEN"       "RED"*"GREEN"             "RED"*"GREEN"                      \n");
+            printf("                                       "RED"*"GREEN"         "RED"*"GREEN"           "RED"*"GREEN"                       \n");
 
-            printf("                          #####       "RED""GREEN"           "RED""GREEN"         "RED"*"GREEN"                        \n");
-            printf("                        ##     ##    "RED""GREEN"             "RED""GREEN"       "RED"*"GREEN"                         \n");
-            printf("                        ##     ##   "RED""GREEN"               "RED""GREEN"     "RED"*"GREEN"                          \n");
-            printf("                          #####    "RED""GREEN"                 "RED""GREEN"   "RED"*"GREEN"                           \n");
-            printf("                           ###    "RED""GREEN"                   "RED""GREEN" "RED"*"GREEN"                            \n");
-            printf("                            #    "RED""GREEN"                     "RED""GREEN"                             \n");
+            printf("                          #####       "RED"*"GREEN"           "RED"*"GREEN"         "RED"*"GREEN"                        \n");
+            printf("                        ##     ##    "RED"*"GREEN"             "RED"*"GREEN"       "RED"*"GREEN"                         \n");
+            printf("                        ##     ##   "RED"*"GREEN"               "RED"*"GREEN"     "RED"*"GREEN"                          \n");
+            printf("                          #####    "RED"*"GREEN"                 "RED"*"GREEN"   "RED"*"GREEN"                           \n");
+            printf("                           ###    "RED"*"GREEN"                   "RED"*"GREEN" "RED"*"GREEN"                            \n");
+            printf("                            #    "RED"*"GREEN"                     "RED"*"GREEN"                             \n");
 
             printf("\n");
             printf(GREEN"                         "RED"N"GREEN"AVEG"RED"A"GREEN"MAZON - GUIA TURISTICO (CENTRO DE MANAUS)\n"RESET);

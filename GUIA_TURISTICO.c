@@ -1,483 +1,614 @@
-/* Navegantes - Guia Turístico (Console em C)
-   Autor: Gerado por assistente
-   Usuário padrão: Manauara
-   Funcionalidades:
-    - Guiar Manauaras sobre o centro de Manaus
-    - Interação simulada com GPS (entrada de coordenadas)
-    - Cadastro de usuários (users.csv)
-    - Locais: históricos (com tabela de valores), restaurantes, bares
-    - Avaliação/nota por usuário (ratings.csv)
-    - Eventos futuros (events.csv)
-    - Como chegar (rota aproximada a partir de hotéis)
-   Compilar: gcc -o navegantes Navegantes_main.c
-*/
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 #include <ctype.h>
-#include <math.h>
 
-#define MAX_DEST 80
-#define MAX_NAME 120
-#define MAX_DESC 512
-#define MAX_CAT 50
-#define INF 1000000000
-#define MAX_USERS 300
-#define MAX_RATINGS 1000
-#define MAX_EVENTS 200
-#define MAX_LINE 1024
+#define MAX_LOCAIS 50
+#define MAX_COMENTARIO 100
+#define MAX_TELEFONES 3
+#define MAX_TIPOS 10
 
-typedef struct {
-    int id;
-    char name[MAX_NAME];
-    char category[MAX_CAT]; /* "Historico", "Restaurante", "Bar" */
-    char description[MAX_DESC];
-    char hours[100];
-    double lat, lon;
-    double price; /* entrada / valor tabelado (apenas para historicos; 0 se não aplicável) */
-} Destination;
+#define RED   "\033[31m"
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
 
-typedef struct {
-    int id;
-    char username[50];
-    char fullname[120];
-} User;
-
-typedef struct {
-    int user_id;
-    int dest_id;
-    int rating; /* 1..5 */
-    char comment[256];
-} Rating;
+typedef enum {
+    PATRIMONIO_HISTORICO = 1,
+    CULTURAL,
+    IGREJA,
+    GASTRONOMIA,
+    CULINARIA_BRASILEIRA,
+    CULINARIA_REGIONAL,
+    INDIGENA,
+    BAR,
+    RESTAURANTE,
+    MERCADO,
+    MUSEU,
+    CINEMA,
+    UNIDADE_SAUDE_PUBLICA,
+    OUTRO
+} TipoDeLugar;
 
 typedef struct {
-    int id;
-    char title[120];
-    int dest_id;
-    char datetime[100]; /* data e hora */
-    char location[120];
-} Event;
+    char rua[100];
+    char cep[20];
+} Endereco;
 
-/* Dados em memória */
-Destination dests[MAX_DEST]; int n_dest = 0;
-int adj[MAX_DEST][MAX_DEST];
-User users[MAX_USERS]; int n_users = 0;
-Rating ratings[MAX_RATINGS]; int n_ratings = 0;
-Event events[MAX_EVENTS]; int n_events = 0;
+typedef struct {
+    char telefones[MAX_TELEFONES][20];
+    int qtdeTelefone;
+    char email[100];
+    char site[100];
+} Contato;
 
-/* Hotéis (origens aproximadas) */
-typedef struct { int id; char name[120]; double lat, lon; } Hotel;
-Hotel hotels[10]; int n_hotels = 0;
+typedef struct {
+    char autor[50];
+    char texto[500];
+    float nota;
+} Comentario;
 
-/* ---------- utilitários ---------- */
+typedef struct {
+    char nome[100];
+    char descricao[500];
+    Endereco endereco;
+    Contato contato;
+    float ranking;
+    TipoDeLugar tipos[MAX_TIPOS];
+    int qtdTipos;
+    float entrada;
+    Comentario comentarios[MAX_COMENTARIO];
+    int numComentarios;
+} Local;
 
-void init_graph() {
-    for (int i=0;i<MAX_DEST;i++) for (int j=0;j<MAX_DEST;j++) adj[i][j] = (i==j?0:INF);
+Local listaLugares[MAX_LOCAIS];
+int numLugares = 0;
+
+/* protótipos */
+void inserirLugar();
+void listarLugares();
+const char* obterNomeTipoDeLugar(TipoDeLugar tipo);
+TipoDeLugar obterEnumTipoDeLugar(int opcao);
+void limparBuffer();
+void limparTela();
+void pressioneEnter();
+void menuDeBusca();
+void salvarTxt(const char *nome_arquivo);
+void carregarTxt(const char *nome_arquivo);
+char* strcasestr_simples(const char* haystack, const char* needle);
+void trim_nl(char *s);
+
+int main() {
+    carregarTxt("locais.txt");
+
+    #ifdef _WIN32
+    system("chcp 65001 > nul");
+    #endif
+
+    {
+        int opcao;
+        do {
+            limparTela();
+            printf(GREEN"                                                                    #           \n");
+            printf("                                                                    ###              \n");
+            printf("                                                                    #####            \n");
+            printf("                                                                    #######          \n");
+            printf("                                                                    #####            \n");
+            printf("                                                                    ###              \n");
+            printf("                                                                    #                \n");
+            printf("                                                                    #                \n");
+            printf("                                                                    #                \n");
+
+            printf("                                            "RED""GREEN"                     "RED""GREEN"                  \n");
+            printf("                                           "RED""GREEN" "RED""GREEN"                   "RED"*"GREEN"                   \n");
+            printf("                                          "RED""GREEN"   "RED""GREEN"                 "RED"*"GREEN"                    \n");
+            printf("                                         "RED""GREEN"     "RED""GREEN"               "RED"*"GREEN"                     \n");
+            printf("                                        "RED""GREEN"       "RED""GREEN"             "RED"*"GREEN"                      \n");
+            printf("                                       "RED""GREEN"         "RED""GREEN"           "RED"*"GREEN"                       \n");
+
+            printf("                          #####       "RED""GREEN"           "RED""GREEN"         "RED"*"GREEN"                        \n");
+            printf("                        ##     ##    "RED""GREEN"             "RED""GREEN"       "RED"*"GREEN"                         \n");
+            printf("                        ##     ##   "RED""GREEN"               "RED""GREEN"     "RED"*"GREEN"                          \n");
+            printf("                          #####    "RED""GREEN"                 "RED""GREEN"   "RED"*"GREEN"                           \n");
+            printf("                           ###    "RED""GREEN"                   "RED""GREEN" "RED"*"GREEN"                            \n");
+            printf("                            #    "RED""GREEN"                     "RED""GREEN"                             \n");
+
+            printf("\n");
+            printf(GREEN"                         "RED"N"GREEN"AVEG"RED"A"GREEN"MAZON - GUIA TURISTICO (CENTRO DE MANAUS)\n"RESET);
+            printf("1 - Inserir novo lugar\n");
+            printf("2 - Listar lugares\n");
+            printf("3 - Buscar atracoes turisticas\n");
+            printf("4 - Salvar em TXT (locais.txt)\n");
+            printf("0 - Sair\n");
+            printf("Escolha uma opcao: ");
+            if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
+            limparBuffer();
+
+            switch(opcao) {
+                case 1:
+                    limparTela();
+                    inserirLugar();
+                    break;
+                case 2:
+                    limparTela();
+                    listarLugares();
+                    pressioneEnter();
+                    break;
+                case 3:
+                    limparTela();
+                    menuDeBusca();
+                    break;
+                case 4:
+                    limparTela();
+                    salvarTxt("locais.txt");
+                    printf("Arquivo salvo em locais.txt\n");
+                    pressioneEnter();
+                    break;
+                case 0:
+                    printf("\nEncerrando programa...\n");
+                    break;
+                default:
+                    printf("\nOpcao invalida!\n");
+                    pressioneEnter();
+            }
+        } while(opcao != 0);
+    }
+
+    return 0;
 }
 
-double haversine(double lat1,double lon1,double lat2,double lon2){
-    const double R = 6371.0;
-    double dlat = (lat2-lat1) * M_PI/180.0;
-    double dlon = (lon2-lon1) * M_PI/180.0;
-    double a = sin(dlat/2)*sin(dlat/2) + cos(lat1*M_PI/180.0)*cos(lat2*M_PI/180.0)*sin(dlon/2)*sin(dlon/2);
-    double c = 2 * atan2(sqrt(a), sqrt(1-a));
-    return R * c;
+void limparBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
-char *strcasestr_local(const char *hay, const char *needle){
-    if (!*needle) return (char*)hay;
-    for (; *hay; hay++){
-        const char *h=hay, *n=needle;
-        while (*h && *n && (tolower((unsigned char)*h) == tolower((unsigned char)*n))){
-            h++; n++;
+void limparTela(){
+    #ifdef _WIN32
+    system("cls");
+    #else
+    system("clear");
+    #endif
+}
+
+void pressioneEnter() {
+    printf("Pressione ENTER para continuar...");
+    while(getchar() != '\n');
+}
+
+/* retira newline final */
+void trim_nl(char *s) {
+    size_t len;
+    if (!s) return;
+    len = strlen(s);
+    if (len == 0) return;
+    if (s[len-1] == '\n') s[len-1] = '\0';
+}
+
+/* busca case-insensitive simples */
+char* strcasestr_simples(const char* haystack, const char* needle) {
+    if (!haystack || !needle || *needle == '\0') return NULL;
+    {
+        int len_h = strlen(haystack);
+        int len_n = strlen(needle);
+        int i,j;
+        for (i = 0; i <= len_h - len_n; i++) {
+            int found = 1;
+            for (j = 0; j < len_n; j++) {
+                char a = haystack[i+j];
+                char b = needle[j];
+                if (tolower((unsigned char)a) != tolower((unsigned char)b)) { found = 0; break; }
+            }
+            if (found) return (char*)haystack + i;
         }
-        if (!*n) return (char*)hay;
     }
     return NULL;
 }
 
-/* ---------- persistência ---------- */
-
-void save_users(){
-    FILE *f = fopen("users.csv","w");
-    if (!f) return;
-    for (int i=0;i<n_users;i++){
-        fprintf(f,"%d,%s,%s\n", users[i].id, users[i].username, users[i].fullname);
+void inserirLugar() {
+    if (numLugares >= MAX_LOCAIS) {
+        printf("\nLista cheia!\n");
+        return;
     }
-    fclose(f);
-}
-void load_users(){
-    FILE *f = fopen("users.csv","r");
-    if (!f) return;
-    char line[MAX_LINE];
-    while (fgets(line,sizeof(line),f)){
-        int id; char uname[100], fname[200];
-        if (sscanf(line,"%d,%99[^,],%199[^\n]", &id, uname, fname)==3){
-            users[n_users].id = id;
-            strncpy(users[n_users].username, uname, sizeof(users[n_users].username)-1);
-            strncpy(users[n_users].fullname, fname, sizeof(users[n_users].fullname)-1);
-            n_users++;
+
+    {
+        Local novoLugar;
+        int opcao, i;
+        memset(&novoLugar, 0, sizeof(Local));
+
+        printf("\n=== CADASTRO DE NOVO LUGAR ===\n");
+
+        printf("Nome do lugar: ");
+        fgets(novoLugar.nome, sizeof(novoLugar.nome), stdin);
+        trim_nl(novoLugar.nome);
+
+        printf("Descricao: ");
+        fgets(novoLugar.descricao, sizeof(novoLugar.descricao), stdin);
+        trim_nl(novoLugar.descricao);
+
+        printf("\n--- Endereco ---\nRua: ");
+        fgets(novoLugar.endereco.rua, sizeof(novoLugar.endereco.rua), stdin);
+        trim_nl(novoLugar.endereco.rua);
+
+        printf("CEP: ");
+        fgets(novoLugar.endereco.cep, sizeof(novoLugar.endereco.cep), stdin);
+        trim_nl(novoLugar.endereco.cep);
+
+        printf("\n--- Contato ---\nQuantos telefones? (max 3): ");
+        if (scanf("%d", &novoLugar.contato.qtdeTelefone) != 1) novoLugar.contato.qtdeTelefone = 0;
+        if (novoLugar.contato.qtdeTelefone > MAX_TELEFONES) novoLugar.contato.qtdeTelefone = MAX_TELEFONES;
+        limparBuffer();
+
+        for (i = 0; i < novoLugar.contato.qtdeTelefone; i++) {
+            printf("Telefone %d: ", i + 1);
+            fgets(novoLugar.contato.telefones[i], sizeof(novoLugar.contato.telefones[i]), stdin);
+            trim_nl(novoLugar.contato.telefones[i]);
         }
-    }
-    fclose(f);
-}
 
-void save_ratings(){
-    FILE *f = fopen("ratings.csv","w");
-    if (!f) return;
-    for (int i=0;i<n_ratings;i++){
-        fprintf(f,"%d,%d,%d,%s\n", ratings[i].user_id, ratings[i].dest_id, ratings[i].rating, ratings[i].comment);
-    }
-    fclose(f);
-}
-void load_ratings(){
-    FILE *f = fopen("ratings.csv","r");
-    if (!f) return;
-    char line[MAX_LINE];
-    while (fgets(line,sizeof(line),f)){
-        int uid,did,rt; char cmt[256];
-        if (sscanf(line,"%d,%d,%d,%255[^\n]", &uid, &did, &rt, cmt)==4){
-            ratings[n_ratings].user_id = uid;
-            ratings[n_ratings].dest_id = did;
-            ratings[n_ratings].rating = rt;
-            strncpy(ratings[n_ratings].comment, cmt, 255);
-            n_ratings++;
+        printf("E-mail: ");
+        fgets(novoLugar.contato.email, sizeof(novoLugar.contato.email), stdin);
+        trim_nl(novoLugar.contato.email);
+
+        printf("Site: ");
+        fgets(novoLugar.contato.site, sizeof(novoLugar.contato.site), stdin);
+        trim_nl(novoLugar.contato.site);
+
+        /* categorias múltiplas */
+        novoLugar.qtdTipos = 0;
+        printf("\n--- Categorias do lugar (digite 0 para parar) ---\n");
+        printf("1-Patrimonio  2-Cultural  3-Igreja  4-Gastronomia  5-C.Brasileira\n");
+        printf("6-C.Regional  7-Indigena  8-Bar  9-Restaurante\n");
+        printf("10-Mercado  11-Museu  12-Cinema  13-Saude  14-Outro\n");
+
+        while (1) {
+            printf("Escolha uma categoria (0 para finalizar): ");
+            if (scanf("%d", &opcao) != 1) { limparBuffer(); continue; }
+            limparBuffer();
+
+            if (opcao == 0) break;
+            if (opcao < 0 || opcao > 14) {
+                printf("Opcao invalida.\n");
+                continue;
+            }
+            if (novoLugar.qtdTipos < MAX_TIPOS) {
+                novoLugar.tipos[novoLugar.qtdTipos++] = obterEnumTipoDeLugar(opcao);
+            } else {
+                printf("Limite de categorias atingido!\n");
+                break;
+            }
         }
+
+        printf("Valor da entrada (0 = gratuito): ");
+        if (scanf("%f", &novoLugar.entrada) != 1) novoLugar.entrada = 0;
+        limparBuffer();
+
+        novoLugar.ranking = 5.0f;
+        novoLugar.numComentarios = 0;
+
+        listaLugares[numLugares++] = novoLugar;
+
+        printf("\nLugar cadastrado!\n");
+        pressioneEnter();
     }
-    fclose(f);
 }
 
-void save_events(){
-    FILE *f = fopen("events.csv","w");
-    if (!f) return;
-    for (int i=0;i<n_events;i++){
-        fprintf(f,"%d,%s,%d,%s,%s\n", events[i].id, events[i].title, events[i].dest_id, events[i].datetime, events[i].location);
+void listarLugares() {
+    if (numLugares == 0) {
+        printf("\nNenhum lugar cadastrado.\n");
+        return;
     }
-    fclose(f);
-}
-void load_events(){
-    FILE *f = fopen("events.csv","r");
-    if (!f) return;
-    char line[MAX_LINE];
-    while (fgets(line,sizeof(line),f)){
-        int id,did; char title[200], dt[200], loc[200];
-        if (sscanf(line,"%d,%199[^,],%d,%199[^,],%199[^\n]", &id, title, &did, dt, loc)==5){
-            events[n_events].id = id;
-            strncpy(events[n_events].title, title, 119);
-            events[n_events].dest_id = did;
-            strncpy(events[n_events].datetime, dt, 99);
-            strncpy(events[n_events].location, loc, 119);
-            n_events++;
-        }
-    }
-    fclose(f);
-}
 
-/* ---------- seed data (Manaus - Centro) ---------- */
+    {
+        int i, j;
+        printf("\n=== LUGARES ===\n");
+        for (i = 0; i < numLugares; i++) {
+            printf("\n--- %s ---\n", listaLugares[i].nome);
+            printf("Descricao: %s\n", listaLugares[i].descricao);
+            printf("Endereco: %s, CEP %s\n", listaLugares[i].endereco.rua, listaLugares[i].endereco.cep);
 
-void add_destination(const char *name,const char *cat,const char *desc,const char *hours,double lat,double lon,double price){
-    if (n_dest >= MAX_DEST) return;
-    dests[n_dest].id = n_dest;
-    strncpy(dests[n_dest].name, name, MAX_NAME-1);
-    strncpy(dests[n_dest].category, cat, MAX_CAT-1);
-    strncpy(dests[n_dest].description, desc, MAX_DESC-1);
-    strncpy(dests[n_dest].hours, hours, 99);
-    dests[n_dest].lat = lat; dests[n_dest].lon = lon;
-    dests[n_dest].price = price;
-    n_dest++;
-}
+            printf("Contato: ");
+            if (listaLugares[i].contato.qtdeTelefone > 0) {
+                printf("Telefones: ");
+                for (j = 0; j < listaLugares[i].contato.qtdeTelefone; j++) {
+                    printf("%s", listaLugares[i].contato.telefones[j]);
+                    if (j < listaLugares[i].contato.qtdeTelefone - 1) printf(", ");
+                }
+                printf("; ");
+            }
+            if (strlen(listaLugares[i].contato.email) > 0) printf("Email: %s; ", listaLugares[i].contato.email);
+            if (strlen(listaLugares[i].contato.site) > 0) printf("Site: %s", listaLugares[i].contato.site);
+            printf("\n");
 
-void seed_data(){
-    init_graph();
-    n_dest=0; n_hotels=0; n_users=0; n_ratings=0; n_events=0;
-    add_destination("Teatro Amazonas", "Historico", "Teatro histórico do ciclo da borracha, visitas guiadas.", "09:00-17:00", -3.1019, -60.0250, 10.0);
-    add_destination("Palácio Rio Negro", "Historico", "Antiga residência do governo, agora espaço cultural.", "09:00-17:00", -3.1045, -60.0190, 0.0);
-    add_destination("Museu do Indio", "Historico", "Acervo etnográfico sobre povos indígenas.", "09:00-16:00", -3.0970, -60.0240, 5.0);
-    add_destination("Restaurante Regional - Centro", "Restaurante", "Pratos regionais: tacacá, tambaqui, cupuaçu.", "11:00-23:00", -3.1185, -60.0230, 0.0);
-    add_destination("Lanches Rápidos - Praça", "Restaurante", "Lanchonetes e pratos rápidos.", "08:00-22:00", -3.1188, -60.0215, 0.0);
-    add_destination("Bar do Porto", "Bar", "Bar tradicional com música local.", "17:00-02:00", -3.1175, -60.0220, 0.0);
-    add_destination("Beco Perigoso - Atenção", "Bar", "Área com alerta noturno: evite andar sozinho à noite.", "24h (evitar à noite)", -3.1160, -60.0240, 0.0);
-    add_destination("Ponto de Informações - Praça Central", "Info", "Posto de informações turísticas.", "08:00-18:00", -3.1180, -60.0210, 0.0);
+            printf("Categorias: ");
+            if (listaLugares[i].qtdTipos == 0) {
+                printf("Nenhuma");
+            } else {
+                for (j = 0; j < listaLugares[i].qtdTipos; j++) {
+                    printf("%s", obterNomeTipoDeLugar(listaLugares[i].tipos[j]));
+                    if (j < listaLugares[i].qtdTipos - 1) printf(", ");
+                }
+            }
+            printf("\n");
 
-    for (int i=0;i<n_dest;i++){
-        for (int j=0;j<n_dest;j++){
-            if (i==j) adj[i][j]=0;
-            else {
-                double d = haversine(dests[i].lat, dests[i].lon, dests[j].lat, dests[j].lon);
-                int cost = (int) (d * 10) + 5;
-                adj[i][j] = cost;
+            printf("Ranking: %.1f\n", listaLugares[i].ranking);
+            printf("Entrada: R$ %.2f\n", listaLugares[i].entrada);
+
+            if (listaLugares[i].numComentarios > 0) {
+                printf("Comentarios (%d):\n", listaLugares[i].numComentarios);
+                for (j = 0; j < listaLugares[i].numComentarios; j++) {
+                    printf("  - %s (%.1f): %s\n", listaLugares[i].comentarios[j].autor,
+                           listaLugares[i].comentarios[j].nota,
+                           listaLugares[i].comentarios[j].texto);
+                }
             }
         }
     }
-
-    hotels[n_hotels].id = n_hotels; strncpy(hotels[n_hotels].name, "Hotel Centro Plaza", 119); hotels[n_hotels].lat = -3.1170; hotels[n_hotels].lon = -60.0220; n_hotels++;
-    hotels[n_hotels].id = n_hotels; strncpy(hotels[n_hotels].name, "Hotel Amazonas Inn", 119); hotels[n_hotels].lat = -3.1050; hotels[n_hotels].lon = -60.0260; n_hotels++;
 }
 
-/* ---------- Dijkstra para rotas ---------- */
+const char* obterNomeTipoDeLugar(TipoDeLugar tipo) {
+    switch(tipo) {
+        case PATRIMONIO_HISTORICO: return "Patrimonio Historico";
+        case CULTURAL: return "Cultural";
+        case IGREJA: return "Igreja";
+        case GASTRONOMIA: return "Gastronomia";
+        case CULINARIA_BRASILEIRA: return "Culinaria Brasileira";
+        case CULINARIA_REGIONAL: return "Culinaria Regional";
+        case INDIGENA: return "Indigena";
+        case BAR: return "Bar";
+        case RESTAURANTE: return "Restaurante";
+        case MERCADO: return "Mercado";
+        case MUSEU: return "Museu";
+        case CINEMA: return "Cinema";
+        case UNIDADE_SAUDE_PUBLICA: return "Saude Publica";
+        default: return "Outro";
+    }
+}
 
-void dijkstra(int src,int dist[],int prev[]){
-    int used[MAX_DEST];
-    for (int i=0;i<n_dest;i++){ dist[i]=INF; prev[i]=-1; used[i]=0; }
-    dist[src]=0;
-    for (int iter=0; iter<n_dest; iter++){
-        int u=-1, best=INF;
-        for (int i=0;i<n_dest;i++) if (!used[i] && dist[i]<best){ best=dist[i]; u=i; }
-        if (u==-1) break;
-        used[u]=1;
-        for (int v=0; v<n_dest; v++){
-            if (adj[u][v] < INF){
-                int nd = dist[u] + adj[u][v];
-                if (nd < dist[v]){ dist[v] = nd; prev[v] = u; }
-            }
+TipoDeLugar obterEnumTipoDeLugar(int opcao) {
+    switch(opcao) {
+        case 1: return PATRIMONIO_HISTORICO;
+        case 2: return CULTURAL;
+        case 3: return IGREJA;
+        case 4: return GASTRONOMIA;
+        case 5: return CULINARIA_BRASILEIRA;
+        case 6: return CULINARIA_REGIONAL;
+        case 7: return INDIGENA;
+        case 8: return BAR;
+        case 9: return RESTAURANTE;
+        case 10: return MERCADO;
+        case 11: return MUSEU;
+        case 12: return CINEMA;
+        case 13: return UNIDADE_SAUDE_PUBLICA;
+        default: return OUTRO;
+    }
+}
+
+void menuDeBusca(){
+    printf("\nMenu de busca ainda em desenvolvimento.\n");
+    printf("Sugestao rapida: buscar por nome ou por categoria (implementacao futura).\n");
+    pressioneEnter();
+}
+
+/* salva no formato "simples" conforme pedido */
+void salvarTxt(const char *nome_arquivo) {
+    FILE *f;
+    int i, j, k;
+    f = fopen(nome_arquivo, "w");
+    if (!f) {
+        printf("Erro ao abrir arquivo para escrita.\n");
+        return;
+    }
+
+    fprintf(f, "%d\n", numLugares);
+    for (i = 0; i < numLugares; i++) {
+        fprintf(f, "LUGAR\n");
+        fprintf(f, "Nome: %s\n", listaLugares[i].nome);
+        fprintf(f, "Descricao: %s\n", listaLugares[i].descricao);
+        fprintf(f, "Rua: %s\n", listaLugares[i].endereco.rua);
+        fprintf(f, "CEP: %s\n", listaLugares[i].endereco.cep);
+
+        fprintf(f, "Telefones: %d\n", listaLugares[i].contato.qtdeTelefone);
+        for (j = 0; j < listaLugares[i].contato.qtdeTelefone; j++) {
+            fprintf(f, "Telefone: %s\n", listaLugares[i].contato.telefones[j]);
         }
-    }
-}
+        fprintf(f, "Email: %s\n", listaLugares[i].contato.email);
+        fprintf(f, "Site: %s\n", listaLugares[i].contato.site);
 
-void print_path(int prev[], int dest_id){
-    int stack[MAX_DEST], top=0;
-    int cur = dest_id;
-    while (cur != -1){ stack[top++]=cur; cur = prev[cur]; }
-    for (int i=top-1;i>=0;i--){
-        printf("%s%s", dests[stack[i]].name, (i>0) ? " -> " : "\n");
-    }
-}
-/* ---------- listagens / detalhes / busca / usuários / avaliações ---------- */
-
-void list_all(){
-    printf("\n--- Todos os locais ---\n");
-    for (int i=0;i<n_dest;i++){
-        if (dests[i].price > 0.0)
-            printf("[%d] %s | %s | Horário: %s | Valor: R$ %.2f\n", dests[i].id, dests[i].name, dests[i].category, dests[i].hours, dests[i].price);
-        else
-            printf("[%d] %s | %s | Horário: %s | Valor: Gratuito/Não aplicável\n", dests[i].id, dests[i].name, dests[i].category, dests[i].hours);
-    }
-}
-
-void list_by_category(const char *cat){
-    printf("\n--- Locais na categoria: %s ---\n", cat);
-    int found=0;
-    for (int i=0;i<n_dest;i++){
-        if (strcasecmp(dests[i].category, cat)==0){
-            if (dests[i].price > 0.0)
-                printf("[%d] %s | Horário: %s | Valor: R$ %.2f\n", dests[i].id, dests[i].name, dests[i].hours, dests[i].price);
-            else
-                printf("[%d] %s | Horário: %s | Valor: Gratuito/Não aplicável\n", dests[i].id, dests[i].name, dests[i].hours);
-            found++;
+        fprintf(f, "Categorias: %d\n", listaLugares[i].qtdTipos);
+        for (j = 0; j < listaLugares[i].qtdTipos; j++) {
+            /* gravamos o número da categoria conforme as opções (1..14) */
+            fprintf(f, "Categoria: %d\n", (int)listaLugares[i].tipos[j]);
         }
-    }
-    if (!found) printf("Nenhum local encontrado nesta categoria.\n");
-}
 
-void show_details(int id){
-    if (id<0 || id>=n_dest){ printf("ID inválido.\n"); return; }
-    Destination *d = &dests[id];
-    printf("\n=== %s ===\n", d->name);
-    printf("Categoria: %s\n", d->category);
-    printf("Descrição: %s\n", d->description);
-    printf("Horário: %s\n", d->hours);
-    if (d->price>0) printf("Valor de entrada: R$ %.2f\n", d->price);
-    else printf("Entrada: Gratuita / Não aplicável\n");
-    /* avaliações resumidas */
-    int count=0; double sum=0;
-    for (int i=0;i<n_ratings;i++){
-        if (ratings[i].dest_id == id){
-            printf("- Usuário %d: nota %d. %s\n", ratings[i].user_id, ratings[i].rating, ratings[i].comment);
-            sum += ratings[i].rating; count++;
+        fprintf(f, "Entrada: %.2f\n", listaLugares[i].entrada);
+        fprintf(f, "Ranking: %.2f\n", listaLugares[i].ranking);
+
+        fprintf(f, "Comentarios: %d\n", listaLugares[i].numComentarios);
+        for (j = 0; j < listaLugares[i].numComentarios; j++) {
+            fprintf(f, "Autor: %s\n", listaLugares[i].comentarios[j].autor);
+            fprintf(f, "Nota: %.1f\n", listaLugares[i].comentarios[j].nota);
+            fprintf(f, "Texto: %s\n", listaLugares[i].comentarios[j].texto);
         }
+
+        fprintf(f, "FIM\n");
     }
-    if (count>0) printf("Média: %.2f (%d avaliações)\n", sum/count, count);
-    else printf("Nenhuma avaliação ainda.\n");
-}
 
-/* ---------- usuários / registro / busca ---------- */
-
-int find_user_by_username(const char *uname){
-    for (int i=0;i<n_users;i++) if (strcmp(users[i].username, uname)==0) return users[i].id;
-    return -1;
-}
-
-void register_user(){
-    if (n_users >= MAX_USERS){ printf("Limite de usuários atingido.\n"); return; }
-    char uname[50], fname[120];
-    printf("Escolha um nome de usuário (sem espaços): ");
-    if (scanf("%49s", uname) != 1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); return; }
-    while(getchar()!='\n');
-    if (find_user_by_username(uname) != -1){ printf("Usuário já existe.\n"); return; }
-    printf("Nome completo: ");
-    fgets(fname, sizeof(fname), stdin); fname[strcspn(fname, "\n")] = 0;
-    users[n_users].id = n_users;
-    strncpy(users[n_users].username, uname, sizeof(users[n_users].username)-1);
-    strncpy(users[n_users].fullname, fname, sizeof(users[n_users].fullname)-1);
-    n_users++;
-    save_users();
-    printf("Usuário cadastrado com id %d.\n", n_users-1);
-}
-
-/* ---------- avaliações ---------- */
-
-void rate_place(){
-    if (n_users==0){ printf("Cadastre-se primeiro.\n"); return; }
-    char uname[50];
-    printf("Informe seu nome de usuário: "); if (scanf("%49s", uname) != 1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); return; }
-    while(getchar()!='\n');
-    int uid = find_user_by_username(uname);
-    if (uid == -1){ printf("Usuário não encontrado.\n"); return; }
-    list_all();
-    int did; printf("Escolha ID do local a avaliar: "); if (scanf("%d",&did) != 1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); return; }
-    while(getchar()!='\n');
-    if (did<0 || did>=n_dest){ printf("Destino inválido.\n"); return; }
-    int rt; printf("Nota (1-5): "); if (scanf("%d",&rt) != 1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); return; }
-    while(getchar()!='\n');
-    if (rt<1 || rt>5){ printf("Nota inválida.\n"); return; }
-    char comment[256]; printf("Comentário (opcional): "); fgets(comment, sizeof(comment), stdin); comment[strcspn(comment, "\n")] = 0;
-    ratings[n_ratings].user_id = uid; ratings[n_ratings].dest_id = did; ratings[n_ratings].rating = rt; strncpy(ratings[n_ratings].comment, comment, 255); n_ratings++;
-    save_ratings();
-    printf("Avaliação registrada. Obrigado!\n");
-}
-
-/* ---------- eventos ---------- */
-
-void add_event(){
-    if (n_events >= MAX_EVENTS){ printf("Limite de eventos atingido.\n"); return; }
-    char title[120]; int did; char dt[100]; char loc[120];
-    printf("Título do evento: "); fgets(title, sizeof(title), stdin); title[strcspn(title,"\n")] = 0;
-    printf("ID do local (veja lista):\n"); list_all(); printf("ID: "); if (scanf("%d",&did) != 1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); return; }
-    while(getchar()!='\n');
-    if (did<0 || did>=n_dest){ printf("ID de local inválido.\n"); return; }
-    printf("Data e hora (ex: 2025-11-20 19:00): "); fgets(dt, sizeof(dt), stdin); dt[strcspn(dt,"\n")] = 0;
-    printf("Local (texto): "); fgets(loc, sizeof(loc), stdin); loc[strcspn(loc,"\n")] = 0;
-    events[n_events].id = n_events; strncpy(events[n_events].title, title, 119); events[n_events].dest_id = did;
-    strncpy(events[n_events].datetime, dt, 99); strncpy(events[n_events].location, loc, 119); n_events++;
-    save_events();
-    printf("Evento adicionado.\n");
-}
-
-void list_events(){
-    printf("\n--- Eventos futuros ---\n");
-    if (n_events==0){ printf("Nenhum evento cadastrado.\n"); return; }
-    for (int i=0;i<n_events;i++){
-        printf("[%d] %s | Local: %s | Data/Hora: %s | No local: %s\n", events[i].id, events[i].title, events[i].location, events[i].datetime, dests[events[i].dest_id].name);
-    }
-}
-
-/* ---------- como chegar (GPS / hotéis) ---------- */
-
-void how_to_get(){
-    printf("\nDeseja usar:\n1) GPS (inserir suas coordenadas)\n2) Escolher hotel como origem\nEscolha: ");
-    int opt; if (scanf("%d",&opt) != 1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); return; }
-    while(getchar()!='\n');
-    double lat, lon;
-    int start = 0;
-    if (opt==1){
-        printf("Insira sua latitude (ex: -3.1170): "); if (scanf("%lf",&lat) != 1){ while(getchar()!='\n'); printf("Inválido.\n"); return; }
-        printf("Insira sua longitude (ex: -60.0220): "); if (scanf("%lf",&lon) != 1){ while(getchar()!='\n'); printf("Inválido.\n"); return; }
-        while(getchar()!='\n');
-        double bestd = 1e18; for (int i=0;i<n_dest;i++){ double d = haversine(lat,lon,dests[i].lat,dests[i].lon); if (d < bestd){ bestd = d; start = i; } }
-    } else {
-        printf("Hotéis:\n"); for (int i=0;i<n_hotels;i++) printf("[%d] %s\n", hotels[i].id, hotels[i].name);
-        int hid; printf("Escolha ID do hotel: "); if (scanf("%d",&hid) != 1){ while(getchar()!='\n'); printf("Inválido.\n"); return; }
-        if (hid<0 || hid>=n_hotels){ printf("Hotel inválido.\n"); return; }
-        while(getchar()!='\n');
-        double bestd = 1e18; for (int i=0;i<n_dest;i++){ double d = haversine(hotels[hid].lat,hotels[hid].lon,dests[i].lat,dests[i].lon); if (d < bestd){ bestd = d; start = i; } }
-    }
-    list_all();
-    int did; printf("Escolha ID do destino: "); if (scanf("%d",&did) != 1){ while(getchar()!='\n'); printf("Inválido.\n"); return; }
-    if (did<0 || did>=n_dest){ printf("Destino inválido.\n"); return; }
-    int dist[MAX_DEST], prev[MAX_DEST]; dijkstra(start, dist, prev);
-    if (dist[did] >= INF){ printf("Rota não encontrada.\n"); return; }
-    printf("Rota sugerida (ponto de acesso inicial: %s):\n", dests[start].name);
-    print_path(prev, did);
-    printf("Distância aproximada entre pontos: %.2f km\n", haversine(dests[start].lat,dests[start].lon,dests[did].lat,dests[did].lon));
-}
-
-/* ---------- export para Canva (CSV) ---------- */
-
-void export_canva(const char *file){
-    FILE *f = fopen(file,"w");
-    if (!f){ printf("Erro ao criar arquivo %s\n", file); return; }
-    fprintf(f,"name,category,description,hours,price\n");
-    for (int i=0;i<n_dest;i++){
-        char pricebuf[32];
-        if (dests[i].price > 0.0) snprintf(pricebuf, sizeof(pricebuf), "R$ %.2f", dests[i].price);
-        else strncpy(pricebuf, "Gratuito", sizeof(pricebuf));
-        /* escape simples: trocar aspas internas por aspas duplas */
-        char desc_safe[MAX_DESC*2]; int k=0;
-        for (int p=0; p < (int)strlen(dests[i].description) && k < (int)sizeof(desc_safe)-2; p++){
-            if (dests[i].description[p] == '"'){ desc_safe[k++] = '"'; desc_safe[k++] = '"'; }
-            else desc_safe[k++] = dests[i].description[p];
-        }
-        desc_safe[k] = '\0';
-        fprintf(f,"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n", dests[i].name, dests[i].category, desc_safe, dests[i].hours, pricebuf);
-    }
     fclose(f);
-    printf("Exportado para %s\n", file);
 }
 
-/* ---------- menu e main ---------- */
+/* carrega do formato "simples" */
+void carregarTxt(const char *nome_arquivo) {
+    FILE *f;
+    char linha[1024];
+    int total = 0;
+    int i;
 
-void load_all(){ load_users(); load_ratings(); load_events(); }
-
-void menu(){
-    int opt = -1;
-    while (opt != 0){
-        printf("\n--- Navegantes - Guia do Centro (Manauara) ---\n");
-        printf("1) Listar todos locais\n");
-        printf("2) Listar por categoria\n");
-        printf("3) Mostrar detalhes de um local\n");
-        printf("4) Como chegar (GPS )\n");
-        printf("5) Cadastrar usuário\n");
-        printf("6) Avaliar e classificar um local\n");
-        printf("7) Eventos futuros (listar/adicionar)\n");
-        printf("8) Exportar para Canva (canva_export.csv)\n");
-        printf("9) Listar avaliações de um local\n");
-        printf("0) Sair\n");
-        printf("Escolha: ");
-        if (scanf("%d", &opt) != 1){ while(getchar()!='\n'); opt=-1; }
-        while(getchar()!='\n');
-        if (opt==1) list_all();
-        else if (opt==2){
-            int catOpt=0;
-            printf("\n--- Escolha uma categoria ---\n");
-            printf("1) Locais históricos\n");
-            printf("2) Restaurantes e lanches\n");
-            printf("3) Bares\n");
-            printf("4) Pontos de informação\n");
-            printf("Opção: "); if (scanf("%d", &catOpt) != 1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); continue; }
-            while(getchar()!='\n');
-            switch(catOpt){
-                case 1: list_by_category("Historico"); break;
-                case 2: list_by_category("Restaurante"); break;
-                case 3: list_by_category("Bar"); break;
-                case 4: list_by_category("Info"); break;
-                default: printf("Categoria inválida.\n"); break;
-            }
-        }
-        else if (opt==3){
-            int id; printf("ID do local: "); if (scanf("%d", &id)!=1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); continue; } show_details(id);
-        }
-        else if (opt==4) how_to_get();
-        else if (opt==5) register_user();
-        else if (opt==6) rate_place();
-        else if (opt==7){
-            int eopt=0;
-            printf("1) Listar eventos\n2) Adicionar evento\nEscolha: "); if (scanf("%d", &eopt) != 1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); continue; }
-            while(getchar()!='\n');
-            if (eopt==1) list_events(); else if (eopt==2) add_event(); else printf("Opção inválida.\n");
-        }
-        else if (opt==8) export_canva("canva_export.csv");
-        else if (opt==9){ int id; printf("ID do local: "); if (scanf("%d", &id)!=1){ while(getchar()!='\n'); printf("Entrada inválida.\n"); continue; } show_details(id); }
-        else if (opt==0) printf("Saindo...\n");
-        else printf("Opção inválida.\n");
+    f = fopen(nome_arquivo, "r");
+    if (!f) {
+        /* arquivo não existe — ok */
+        return;
     }
-}
 
-int main(){
-    seed_data();
-    load_all();
-    printf("\033[1;34m=== NAVEGANTES - GUIA DO CENTRO ===\033[0m\n");
-    printf("%d locais carregados.\n", n_dest);
-    menu();
-    return 0;
+    /* inicializa */
+    numLugares = 0;
+
+    /* primeiro, tenta ler a primeira linha — número de lugares (opcional) */
+    if (fgets(linha, sizeof(linha), f) == NULL) {
+        fclose(f);
+        return;
+    }
+    trim_nl(linha);
+    /* se for número, podemos usar, senão voltamos arquivo ao início */
+    if (sscanf(linha, "%d", &total) != 1) {
+        /* não era número: reinicia leitura desde começo */
+        rewind(f);
+    }
+
+    while (fgets(linha, sizeof(linha), f) != NULL) {
+        trim_nl(linha);
+        if (strcmp(linha, "LUGAR") == 0) {
+            Local novoLugar;
+            memset(&novoLugar, 0, sizeof(Local));
+            novoLugar.qtdTipos = 0;
+            novoLugar.numComentarios = 0;
+            novoLugar.contato.qtdeTelefone = 0;
+            novoLugar.ranking = 5.0f;
+            novoLugar.entrada = 0.0f;
+
+            /* lê até encontrar "FIM" ou EOF */
+            while (fgets(linha, sizeof(linha), f) != NULL) {
+                trim_nl(linha);
+                if (strncmp(linha, "Nome:", 5) == 0) {
+                    char *p = linha + 5;
+                    while (*p == ' ') p++;
+                    strncpy(novoLugar.nome, p, sizeof(novoLugar.nome)-1);
+                } else if (strncmp(linha, "Descricao:", 10) == 0) {
+                    char *p = linha + 10;
+                    while (*p == ' ') p++;
+                    strncpy(novoLugar.descricao, p, sizeof(novoLugar.descricao)-1);
+                } else if (strncmp(linha, "Rua:", 4) == 0) {
+                    char *p = linha + 4;
+                    while (*p == ' ') p++;
+                    strncpy(novoLugar.endereco.rua, p, sizeof(novoLugar.endereco.rua)-1);
+                } else if (strncmp(linha, "CEP:", 4) == 0) {
+                    char *p = linha + 4;
+                    while (*p == ' ') p++;
+                    strncpy(novoLugar.endereco.cep, p, sizeof(novoLugar.endereco.cep)-1);
+                } else if (strncmp(linha, "Telefones:", 10) == 0) {
+                    int qtd = 0;
+                    sscanf(linha + 10, "%d", &qtd);
+                    if (qtd < 0) qtd = 0;
+                    if (qtd > MAX_TELEFONES) qtd = MAX_TELEFONES;
+                    novoLugar.contato.qtdeTelefone = qtd;
+                    /* ler os telefones nas próximas linhas */
+                    {
+                        int t;
+                        for (t = 0; t < qtd; t++) {
+                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            trim_nl(linha);
+                            if (strncmp(linha, "Telefone:", 9) == 0) {
+                                char *p = linha + 9;
+                                while (*p == ' ') p++;
+                                strncpy(novoLugar.contato.telefones[t], p, sizeof(novoLugar.contato.telefones[t])-1);
+                            } else {
+                                /* formato inesperado: volta ponteiro de arquivo uma linha para reprocessar */
+                                /* não é trivial voltar uma linha em fgets; como fallback copia a linha para telefone */
+                                strncpy(novoLugar.contato.telefones[t], linha, sizeof(novoLugar.contato.telefones[t])-1);
+                            }
+                        }
+                    }
+                } else if (strncmp(linha, "Email:", 6) == 0) {
+                    char *p = linha + 6;
+                    while (*p == ' ') p++;
+                    strncpy(novoLugar.contato.email, p, sizeof(novoLugar.contato.email)-1);
+                } else if (strncmp(linha, "Site:", 5) == 0) {
+                    char *p = linha + 5;
+                    while (*p == ' ') p++;
+                    strncpy(novoLugar.contato.site, p, sizeof(novoLugar.contato.site)-1);
+                } else if (strncmp(linha, "Categorias:", 11) == 0) {
+                    int qtd = 0;
+                    sscanf(linha + 11, "%d", &qtd);
+                    if (qtd < 0) qtd = 0;
+                    if (qtd > MAX_TIPOS) qtd = MAX_TIPOS;
+                    novoLugar.qtdTipos = 0;
+                    /* ler categorias nas próximas linhas */
+                    {
+                        int t;
+                        for (t = 0; t < qtd; t++) {
+                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            trim_nl(linha);
+                            if (strncmp(linha, "Categoria:", 10) == 0) {
+                                int cat = 0;
+                                sscanf(linha + 10, "%d", &cat);
+                                if (cat < 1 || cat > 14) cat = 14;
+                                novoLugar.tipos[novoLugar.qtdTipos++] = obterEnumTipoDeLugar(cat);
+                            } else {
+                                /* linha inesperada: ignorar */
+                            }
+                        }
+                    }
+                } else if (strncmp(linha, "Entrada:", 8) == 0) {
+                    float e = 0.0f;
+                    sscanf(linha + 8, "%f", &e);
+                    novoLugar.entrada = e;
+                } else if (strncmp(linha, "Ranking:", 8) == 0) {
+                    float r = 0.0f;
+                    sscanf(linha + 8, "%f", &r);
+                    novoLugar.ranking = r;
+                } else if (strncmp(linha, "Comentarios:", 11) == 0) {
+                    int qtd = 0;
+                    sscanf(linha + 11, "%d", &qtd);
+                    if (qtd < 0) qtd = 0;
+                    if (qtd > MAX_COMENTARIO) qtd = MAX_COMENTARIO;
+                    novoLugar.numComentarios = 0;
+                    {
+                        int c;
+                        for (c = 0; c < qtd; c++) {
+                            Comentario com;
+                            memset(&com, 0, sizeof(Comentario));
+                            /* Autor */
+                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            trim_nl(linha);
+                            if (strncmp(linha, "Autor:", 6) == 0) {
+                                char *p = linha + 6;
+                                while (*p == ' ') p++;
+                                strncpy(com.autor, p, sizeof(com.autor)-1);
+                            }
+                            /* Nota */
+                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            trim_nl(linha);
+                            if (strncmp(linha, "Nota:", 5) == 0) {
+                                float n = 0.0f;
+                                sscanf(linha + 5, "%f", &n);
+                                com.nota = n;
+                            }
+                            /* Texto */
+                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            trim_nl(linha);
+                            if (strncmp(linha, "Texto:", 6) == 0) {
+                                char *p = linha + 6;
+                                while (*p == ' ') p++;
+                                strncpy(com.texto, p, sizeof(com.texto)-1);
+                            }
+                            novoLugar.comentarios[novoLugar.numComentarios++] = com;
+                        }
+                    }
+                } else if (strcmp(linha, "FIM") == 0) {
+                    break;
+                } else {
+                    /* linha inesperada: ignorar */
+                }
+            }
+
+            if (numLugares < MAX_LOCAIS) {
+                listaLugares[numLugares++] = novoLugar;
+            } else {
+                /* excedeu capacidade */
+                break;
+            }
+        } else {
+            /* linha que não é 'LUGAR' - ignorar */
+        }
+    }
+
+    fclose(f);
 }

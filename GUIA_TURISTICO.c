@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -77,6 +76,7 @@ void salvarTxt(const char *nome_arquivo);
 void carregarTxt(const char *nome_arquivo);
 char* strcasestr_simples(const char* haystack, const char* needle);
 void trim_nl(char *s);
+void filtrarPorCategoria();
 
 int main() {
     carregarTxt("locais.txt");
@@ -343,6 +343,70 @@ void listarLugares() {
         }
     }
 }
+void filtrarPorCategoria() {
+    if (numLugares == 0) {
+        printf("\nNenhum lugar cadastrado.\n");
+        pressioneEnter();
+        return;
+    }
+
+    int opcao;
+
+    printf("\n=== FILTRAR POR CATEGORIA ===\n");
+    printf("1 - Patrimonio Historico\n");
+    printf("2 - Cultural\n");
+    printf("3 - Igreja\n");
+    printf("4 - Gastronomia\n");
+    printf("5 - Culinaria Brasileira\n");
+    printf("6 - Culinaria Regional\n");
+    printf("7 - Indigena\n");
+    printf("8 - Bar\n");
+    printf("9 - Restaurante\n");
+    printf("10 - Mercado\n");
+    printf("11 - Museu\n");
+    printf("12 - Cinema\n");
+    printf("13 - Saude Publica\n");
+    printf("14 - Outro\n");
+    printf("Escolha uma categoria: ");
+
+    if (scanf("%d", &opcao) != 1 || opcao < 1 || opcao > 14) {
+        limparBuffer();
+        printf("\nOpcao invalida!\n");
+        pressioneEnter();
+        return;
+    }
+    limparBuffer();
+
+    TipoDeLugar categoriaEscolhida = obterEnumTipoDeLugar(opcao);
+    int encontrados = 0;
+
+    limparTela();
+    printf("\n=== RESULTADOS DA BUSCA ===\n");
+
+    for (int i = 0; i < numLugares; i++) {
+
+        // Verifica apenas categorias EXATAS
+        if (listaLugares[i].qtdTipos == 1 && listaLugares[i].tipos[0] == categoriaEscolhida) {
+
+            printf("\n--- %s ---\n", listaLugares[i].nome);
+            printf("Descricao: %s\n", listaLugares[i].descricao);
+            printf("Endereco: %s, CEP %s\n",
+                listaLugares[i].endereco.rua,
+                listaLugares[i].endereco.cep);
+            printf("Entrada: R$ %.2f\n", listaLugares[i].entrada);
+            printf("Ranking: %.1f\n", listaLugares[i].ranking);
+
+            encontrados++;
+        }
+    }
+
+    if (encontrados == 0) {
+        printf("\nNenhum lugar encontrado para essa categoria exata.\n");
+    }
+
+    printf("\n");
+    pressioneEnter();
+}
 
 const char* obterNomeTipoDeLugar(TipoDeLugar tipo) {
     switch(tipo) {
@@ -382,10 +446,8 @@ TipoDeLugar obterEnumTipoDeLugar(int opcao) {
     }
 }
 
-void menuDeBusca(){
-    printf("\nMenu de busca ainda em desenvolvimento.\n");
-    printf("Sugestao rapida: buscar por nome ou por categoria (implementacao futura).\n");
-    pressioneEnter();
+void menuDeBusca() {
+    filtrarPorCategoria();
 }
 
 /* salva no formato "simples" conforme pedido */
@@ -612,6 +674,7 @@ void carregarTxt(const char *nome_arquivo) {
 
     fclose(f);
 }
+
 
 
 

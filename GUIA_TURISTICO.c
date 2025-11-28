@@ -77,6 +77,7 @@ void carregarTxt(const char *nome_arquivo);
 char* strcasestr_simples(const char* haystack, const char* needle);
 void trim_nl(char *s);
 void filtrarPorCategoria();
+void deletarLugar();
 
 int main() {
     carregarTxt("locais.txt");
@@ -105,7 +106,6 @@ int main() {
             printf("                                         "RED"*"GREEN"     "RED"*"GREEN"               "RED"*"GREEN"                     \n");
             printf("                                        "RED"*"GREEN"       "RED"*"GREEN"             "RED"*"GREEN"                      \n");
             printf("                                       "RED"*"GREEN"         "RED"*"GREEN"           "RED"*"GREEN"                       \n");
-
             printf("                          #####       "RED"*"GREEN"           "RED"*"GREEN"         "RED"*"GREEN"                        \n");
             printf("                        ##     ##    "RED"*"GREEN"             "RED"*"GREEN"       "RED"*"GREEN"                         \n");
             printf("                        ##     ##   "RED"*"GREEN"               "RED"*"GREEN"     "RED"*"GREEN"                          \n");
@@ -119,6 +119,7 @@ int main() {
             printf("2 - Listar lugares\n");
             printf("3 - Filtrar por categorias\n");
             printf("4 - Salvar em TXT (locais.txt)\n");
+            printf("5 - Deletar por nome do local\n");
             printf("0 - Sair\n");
             printf("Escolha uma opcao: ");
             if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
@@ -136,7 +137,7 @@ int main() {
                     break;
                 case 3:
                     limparTela();
-                    menuDeBusca();
+                    filtrarPorCategoria();
                     break;
                 case 4:
                     limparTela();
@@ -144,11 +145,16 @@ int main() {
                     printf("Arquivo salvo em locais.txt\n");
                     pressioneEnter();
                     break;
+                case 5:
+                    limparTela();
+                    deletarLugar();
+                    pressioneEnter();
+                    break;
                 case 0:
                     printf("\nEncerrando programa...\n");
                     break;
                 default:
-                    printf("\nOpcao invalida!\n");
+                    printf("\nOpcão inválida!\n");
                     pressioneEnter();
             }
         } while(opcao != 0);
@@ -266,7 +272,7 @@ void inserirLugar() {
 
             if (opcao == 0) break;
             if (opcao < 0 || opcao > 14) {
-                printf("Opcao invalida.\n");
+                printf("Opcão inválida.\n");
                 continue;
             }
             if (novoLugar.qtdTipos < MAX_TIPOS) {
@@ -297,52 +303,51 @@ void listarLugares() {
         return;
     }
 
-    {
-        int i, j;
-        printf("\n=== LUGARES ===\n");
-        for (i = 0; i < numLugares; i++) {
-            printf("\n--- %s ---\n", listaLugares[i].nome);
-            printf("Descricao: %s\n", listaLugares[i].descricao);
-            printf("Endereco: %s, CEP %s\n", listaLugares[i].endereco.rua, listaLugares[i].endereco.cep);
+    int i, j;
+    printf("\n=== LUGARES ===\n");
+    for (i = 0; i < numLugares; i++) {
+        printf("\n--- %s ---\n", listaLugares[i].nome);
+        printf("Descricao: %s\n", listaLugares[i].descricao);
+        printf("Endereco: %s, CEP %s\n", listaLugares[i].endereco.rua, listaLugares[i].endereco.cep);
 
-            printf("Contato: ");
-            if (listaLugares[i].contato.qtdeTelefone > 0) {
-                printf("Telefones: ");
-                for (j = 0; j < listaLugares[i].contato.qtdeTelefone; j++) {
-                    printf("%s", listaLugares[i].contato.telefones[j]);
-                    if (j < listaLugares[i].contato.qtdeTelefone - 1) printf(", ");
-                }
-                printf("; ");
+        printf("Contato: ");
+        if (listaLugares[i].contato.qtdeTelefone > 0) {
+            printf("Telefones: ");
+            for (j = 0; j < listaLugares[i].contato.qtdeTelefone; j++) {
+                printf("%s", listaLugares[i].contato.telefones[j]);
+                if (j < listaLugares[i].contato.qtdeTelefone - 1) printf(", ");
             }
-            if (strlen(listaLugares[i].contato.email) > 0) printf("Email: %s; ", listaLugares[i].contato.email);
-            if (strlen(listaLugares[i].contato.site) > 0) printf("Site: %s", listaLugares[i].contato.site);
-            printf("\n");
+            printf("; ");
+        }
+        if (strlen(listaLugares[i].contato.email) > 0) printf("Email: %s; ", listaLugares[i].contato.email);
+        if (strlen(listaLugares[i].contato.site) > 0) printf("Site: %s", listaLugares[i].contato.site);
+        printf("\n");
 
-            printf("Categorias: ");
-            if (listaLugares[i].qtdTipos == 0) {
-                printf("Nenhuma");
-            } else {
-                for (j = 0; j < listaLugares[i].qtdTipos; j++) {
-                    printf("%s", obterNomeTipoDeLugar(listaLugares[i].tipos[j]));
-                    if (j < listaLugares[i].qtdTipos - 1) printf(", ");
-                }
+        printf("Categorias: ");
+        if (listaLugares[i].qtdTipos == 0) {
+            printf("Nenhuma");
+        } else {
+            for (j = 0; j < listaLugares[i].qtdTipos; j++) {
+                printf("%s", obterNomeTipoDeLugar(listaLugares[i].tipos[j]));
+                if (j < listaLugares[i].qtdTipos - 1) printf(", ");
             }
-            printf("\n");
+        }
+        printf("\n");
 
-            printf("Ranking: %.1f\n", listaLugares[i].ranking);
-            printf("Entrada: R$ %.2f\n", listaLugares[i].entrada);
+        printf("Ranking: %.1f\n", listaLugares[i].ranking);
+        printf("Entrada: R$ %.2f\n", listaLugares[i].entrada);
 
-            if (listaLugares[i].numComentarios > 0) {
-                printf("Comentarios (%d):\n", listaLugares[i].numComentarios);
-                for (j = 0; j < listaLugares[i].numComentarios; j++) {
-                    printf("  - %s (%.1f): %s\n", listaLugares[i].comentarios[j].autor,
-                           listaLugares[i].comentarios[j].nota,
-                           listaLugares[i].comentarios[j].texto);
-                }
+        if (listaLugares[i].numComentarios > 0) {
+            printf("Comentarios (%d):\n", listaLugares[i].numComentarios);
+            for (j = 0; j < listaLugares[i].numComentarios; j++) {
+                printf("  - %s (%.1f): %s\n", listaLugares[i].comentarios[j].autor,
+                       listaLugares[i].comentarios[j].nota,
+                       listaLugares[i].comentarios[j].texto);
             }
         }
     }
 }
+
 void filtrarPorCategoria() {
     if (numLugares == 0) {
         printf("\nNenhum lugar cadastrado.\n");
@@ -384,19 +389,17 @@ void filtrarPorCategoria() {
     printf("\n=== RESULTADOS DA BUSCA ===\n");
 
     for (int i = 0; i < numLugares; i++) {
-
-        // Verifica apenas categorias EXATAS
-        if (listaLugares[i].qtdTipos == 1 && listaLugares[i].tipos[0] == categoriaEscolhida) {
-
-            printf("\n--- %s ---\n", listaLugares[i].nome);
-            printf("Descricao: %s\n", listaLugares[i].descricao);
-            printf("Endereco: %s, CEP %s\n",
-                listaLugares[i].endereco.rua,
-                listaLugares[i].endereco.cep);
-            printf("Entrada: R$ %.2f\n", listaLugares[i].entrada);
-            printf("Ranking: %.1f\n", listaLugares[i].ranking);
-
-            encontrados++;
+        for (int j = 0; j < MAX_TIPOS; j++) {
+            if (listaLugares[i].tipos[j] == categoriaEscolhida) {
+                printf("\n--- %s ---\n", listaLugares[i].nome);
+                printf("Descricao: %s\n", listaLugares[i].descricao);
+                printf("Endereco: %s, CEP %s\n",
+                    listaLugares[i].endereco.rua,
+                    listaLugares[i].endereco.cep);
+                printf("Entrada: R$ %.2f\n", listaLugares[i].entrada);
+                printf("Ranking: %.1f\n", listaLugares[i].ranking);
+                encontrados = 1;
+            }
         }
     }
 
@@ -452,60 +455,59 @@ void menuDeBusca() {
 
 /* salva no formato "simples" conforme pedido */
 void salvarTxt(const char *nome_arquivo) {
-    FILE *f;
-    int i, j, k;
-    f = fopen(nome_arquivo, "w");
-    if (!f) {
+    int i, j;
+    FILE *file = fopen(nome_arquivo, "w");
+    if (!file) {
         printf("Erro ao abrir arquivo para escrita.\n");
         return;
     }
 
-    fprintf(f, "%d\n", numLugares);
+    fprintf(file, "%d\n", numLugares);
     for (i = 0; i < numLugares; i++) {
-        fprintf(f, "LUGAR\n");
-        fprintf(f, "Nome: %s\n", listaLugares[i].nome);
-        fprintf(f, "Descricao: %s\n", listaLugares[i].descricao);
-        fprintf(f, "Rua: %s\n", listaLugares[i].endereco.rua);
-        fprintf(f, "CEP: %s\n", listaLugares[i].endereco.cep);
+        fprintf(file, "LUGAR\n");
+        fprintf(file, "Nome: %s\n", listaLugares[i].nome);
+        fprintf(file, "Descricao: %s\n", listaLugares[i].descricao);
+        fprintf(file, "Rua: %s\n", listaLugares[i].endereco.rua);
+        fprintf(file, "CEP: %s\n", listaLugares[i].endereco.cep);
 
-        fprintf(f, "Telefones: %d\n", listaLugares[i].contato.qtdeTelefone);
+        fprintf(file, "Telefones: %d\n", listaLugares[i].contato.qtdeTelefone);
         for (j = 0; j < listaLugares[i].contato.qtdeTelefone; j++) {
-            fprintf(f, "Telefone: %s\n", listaLugares[i].contato.telefones[j]);
+            fprintf(file, "Telefone: %s\n", listaLugares[i].contato.telefones[j]);
         }
-        fprintf(f, "Email: %s\n", listaLugares[i].contato.email);
-        fprintf(f, "Site: %s\n", listaLugares[i].contato.site);
+        fprintf(file, "Email: %s\n", listaLugares[i].contato.email);
+        fprintf(file, "Site: %s\n", listaLugares[i].contato.site);
 
-        fprintf(f, "Categorias: %d\n", listaLugares[i].qtdTipos);
+        fprintf(file, "Categorias: %d\n", listaLugares[i].qtdTipos);
         for (j = 0; j < listaLugares[i].qtdTipos; j++) {
             /* gravamos o número da categoria conforme as opções (1..14) */
-            fprintf(f, "Categoria: %d\n", (int)listaLugares[i].tipos[j]);
+            fprintf(file, "Categoria: %d\n", (int)listaLugares[i].tipos[j]);
         }
 
-        fprintf(f, "Entrada: %.2f\n", listaLugares[i].entrada);
-        fprintf(f, "Ranking: %.2f\n", listaLugares[i].ranking);
+        fprintf(file, "Entrada: %.2f\n", listaLugares[i].entrada);
+        fprintf(file, "Ranking: %.2f\n", listaLugares[i].ranking);
 
-        fprintf(f, "Comentarios: %d\n", listaLugares[i].numComentarios);
+        fprintf(file, "Comentarios: %d\n", listaLugares[i].numComentarios);
         for (j = 0; j < listaLugares[i].numComentarios; j++) {
-            fprintf(f, "Autor: %s\n", listaLugares[i].comentarios[j].autor);
-            fprintf(f, "Nota: %.1f\n", listaLugares[i].comentarios[j].nota);
-            fprintf(f, "Texto: %s\n", listaLugares[i].comentarios[j].texto);
+            fprintf(file, "Autor: %s\n", listaLugares[i].comentarios[j].autor);
+            fprintf(file, "Nota: %.1f\n", listaLugares[i].comentarios[j].nota);
+            fprintf(file, "Texto: %s\n", listaLugares[i].comentarios[j].texto);
         }
 
-        fprintf(f, "FIM\n");
+        fprintf(file, "FIM\n");
     }
 
-    fclose(f);
+    fclose(file);
 }
 
 /* carrega do formato "simples" */
 void carregarTxt(const char *nome_arquivo) {
-    FILE *f;
+    FILE *file;
     char linha[1024];
     int total = 0;
     int i;
 
-    f = fopen(nome_arquivo, "r");
-    if (!f) {
+    file = fopen(nome_arquivo, "r");
+    if (!file) {
         /* arquivo não existe — ok */
         return;
     }
@@ -514,18 +516,18 @@ void carregarTxt(const char *nome_arquivo) {
     numLugares = 0;
 
     /* primeiro, tenta ler a primeira linha — número de lugares (opcional) */
-    if (fgets(linha, sizeof(linha), f) == NULL) {
-        fclose(f);
+    if (fgets(linha, sizeof(linha), file) == NULL) {
+        fclose(file);
         return;
     }
     trim_nl(linha);
     /* se for número, podemos usar, senão voltamos arquivo ao início */
     if (sscanf(linha, "%d", &total) != 1) {
         /* não era número: reinicia leitura desde começo */
-        rewind(f);
+        rewind(file);
     }
 
-    while (fgets(linha, sizeof(linha), f) != NULL) {
+    while (fgets(linha, sizeof(linha), file) != NULL) {
         trim_nl(linha);
         if (strcmp(linha, "LUGAR") == 0) {
             Local novoLugar;
@@ -537,7 +539,7 @@ void carregarTxt(const char *nome_arquivo) {
             novoLugar.entrada = 0.0f;
 
             /* lê até encontrar "FIM" ou EOF */
-            while (fgets(linha, sizeof(linha), f) != NULL) {
+            while (fgets(linha, sizeof(linha), file) != NULL) {
                 trim_nl(linha);
                 if (strncmp(linha, "Nome:", 5) == 0) {
                     char *p = linha + 5;
@@ -565,7 +567,7 @@ void carregarTxt(const char *nome_arquivo) {
                     {
                         int t;
                         for (t = 0; t < qtd; t++) {
-                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            if (fgets(linha, sizeof(linha), file) == NULL) break;
                             trim_nl(linha);
                             if (strncmp(linha, "Telefone:", 9) == 0) {
                                 char *p = linha + 9;
@@ -596,7 +598,7 @@ void carregarTxt(const char *nome_arquivo) {
                     {
                         int t;
                         for (t = 0; t < qtd; t++) {
-                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            if (fgets(linha, sizeof(linha), file) == NULL) break;
                             trim_nl(linha);
                             if (strncmp(linha, "Categoria:", 10) == 0) {
                                 int cat = 0;
@@ -628,7 +630,7 @@ void carregarTxt(const char *nome_arquivo) {
                             Comentario com;
                             memset(&com, 0, sizeof(Comentario));
                             /* Autor */
-                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            if (fgets(linha, sizeof(linha), file) == NULL) break;
                             trim_nl(linha);
                             if (strncmp(linha, "Autor:", 6) == 0) {
                                 char *p = linha + 6;
@@ -636,7 +638,7 @@ void carregarTxt(const char *nome_arquivo) {
                                 strncpy(com.autor, p, sizeof(com.autor)-1);
                             }
                             /* Nota */
-                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            if (fgets(linha, sizeof(linha), file) == NULL) break;
                             trim_nl(linha);
                             if (strncmp(linha, "Nota:", 5) == 0) {
                                 float n = 0.0f;
@@ -644,7 +646,7 @@ void carregarTxt(const char *nome_arquivo) {
                                 com.nota = n;
                             }
                             /* Texto */
-                            if (fgets(linha, sizeof(linha), f) == NULL) break;
+                            if (fgets(linha, sizeof(linha), file) == NULL) break;
                             trim_nl(linha);
                             if (strncmp(linha, "Texto:", 6) == 0) {
                                 char *p = linha + 6;
@@ -672,8 +674,39 @@ void carregarTxt(const char *nome_arquivo) {
         }
     }
 
-    fclose(f);
+    fclose(file);
 }
+
+void deletarLugar() {
+    char nome[50];
+    printf("Digite o nome do local:");
+    fgets(nome, sizeof(nome), stdin);
+    trim_nl(nome);
+
+    int indice = 0;
+    int encontrou = 1;
+
+    for (int i = 0; i < numLugares; i++) {
+        encontrou = strcmp(listaLugares[i].nome, nome);
+        if (encontrou == 0) {
+            printf("Encontrou");
+            indice = i;
+            break;
+        }
+    }
+
+    if (encontrou == 0) {
+        for (int i = indice; i < numLugares; i++) {
+            listaLugares[i] = listaLugares[i + 1];
+        }
+        numLugares--;
+        salvarTxt("locais.txt");
+        printf("Arquivo atualizado com sucesso!\n");
+    }else {
+        printf("Não foi encontrado o local \"%s\"\n", nome);
+    }
+}
+
 
 
 

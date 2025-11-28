@@ -117,7 +117,7 @@ int main() {
             printf(GREEN"                         "RED"N"GREEN"AVEG"RED"A"GREEN"MAZON - GUIA TURISTICO (CENTRO DE MANAUS)\n"RESET);
             printf("1 - Inserir novo lugar\n");
             printf("2 - Listar lugares\n");
-            printf("3 - Buscar atracoes turisticas\n");
+            printf("3 - Filtrar por categorias\n");
             printf("4 - Salvar em TXT (locais.txt)\n");
             printf("0 - Sair\n");
             printf("Escolha uma opcao: ");
@@ -612,5 +612,6 @@ void carregarTxt(const char *nome_arquivo) {
 
     fclose(f);
 }
+
 
 

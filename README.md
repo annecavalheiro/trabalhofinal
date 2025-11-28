@@ -155,7 +155,7 @@ projeto/
 
 - **Anne Cavalheiro** - [GitHub](https://github.com/annecavalheiro) - Responsabilidade principal
 - **Anne Oliveira** - [GitHub](https://github.com/annehdob) - Estruturas de dados
-- **Anderson ** - [GitHub](https://github.com/andersonsas) - Interface e I/O
+- **Anderson da Silva** - [GitHub](https://github.com/andersonsas) - Interface e I/O
 - **Samily Moldes** - [GitHub]() - Testes e documentação
 
 

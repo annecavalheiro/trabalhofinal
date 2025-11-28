@@ -42,6 +42,91 @@ main.exe
 ```bash
 ./main.exe
 ```
+### Menu Principal
+
+Ao executar o programa, você verá o menu principal com as seguintes opções:
+```
+NAVEGAMAZON - GUIA TURISTICO (CENTRO DE MANAUS)
+1 - Inserir novo lugar
+2 - Listar lugares
+3 - Filtrar por categorias
+4 - Salvar em TXT (locais.txt)
+5 - Deletar por nome do local
+0 - Sair
+```
+
+### Funcionalidades Detalhadas
+
+#### 1️⃣ Inserir Novo Lugar
+
+Cadastre um novo ponto turístico informando:
+- Nome do local
+- Descrição detalhada
+- Endereço (rua e CEP)
+- Contatos (até 3 telefones, e-mail e site)
+- Categorias múltiplas (escolha entre 14 opções)
+- Valor da entrada (R$ 0,00 para gratuito)
+
+**Exemplo de uso:**
+```
+Escolha uma opcao: 1
+Nome do lugar: Teatro Amazonas
+Descricao: Patrimônio histórico e cultural da cidade
+Rua: Av. Eduardo Ribeiro
+CEP: 69010-000
+Quantos telefones? (max 3): 1
+Telefone 1: (92) 3622-1880
+...
+```
+
+#### 2️⃣ Listar Lugares
+
+Visualize todos os locais cadastrados com informações completas:
+- Nome e descrição
+- Endereço e contatos
+- Categorias atribuídas
+- Ranking (nota de 0 a 5)
+- Valor da entrada
+- Comentários de visitantes (se houver)
+
+#### 3️⃣ Filtrar por Categorias
+
+Busque locais por categoria específica:
+- Selecione uma das 14 categorias disponíveis
+- O sistema exibirá apenas os locais que correspondem à categoria escolhida
+- Ideal para encontrar restaurantes, museus, igrejas, etc.
+
+**Exemplo:**
+```
+Escolha uma categoria: 11 (Museu)
+Resultado: Lista todos os museus cadastrados
+```
+
+#### 4️⃣ Salvar em TXT
+
+- Os dados são automaticamente salvos no arquivo `locais.txt`
+- Use esta opção para garantir que todas as alterações foram salvas
+- O arquivo é carregado automaticamente ao iniciar o programa
+
+#### 5️⃣ Deletar Local
+
+Remove um local do cadastro:
+- Digite o nome exato do local
+- O sistema confirmará se encontrou o local
+- Os dados são automaticamente atualizados no arquivo
+
+**⚠️ Atenção:** A exclusão é permanente!
+
+### Dicas de Uso
+
+💡 **Categorias Múltiplas**: Um local pode ter várias categorias. Por exemplo, uma igreja histórica pode ser marcada como "Igreja", "Patrimônio Histórico" e "Cultural".
+
+💡 **Dados Persistentes**: Todos os dados são salvos automaticamente em `locais.txt` e carregados ao iniciar o programa.
+
+💡 **Entrada Gratuita**: Para locais gratuitos, digite `0` no valor da entrada.
+
+💡 **Busca Precisa**: Ao deletar um local, digite o nome exatamente como foi cadastrado (case-sensitive).
+
 
 ## 📁 Estrutura do Projeto
 

@@ -1,7 +1,7 @@
 # Navegamazon
 
-Ferramenta digital para consulta e análise de pontos turísticos da capital manauara.
-(BREVE DESCRIÇÃO DO TRABALHO - 1 OU 2 LINHAS)
+Ferramenta digital para consulta e análise de pontos turísticos do centro de Manaus.
+
 
 ## 📋 Sobre o Projeto
 
@@ -12,7 +12,7 @@ Software desenvolvido para conectar turistas à cidade de Manaus, apresentando o
 - Manter os principais pontos turisticos
 - Carregamento local (.txt)
 - Filtros personalizados:
-    - Pesquisa por caracteristica de cada local
+    - Pesquisa por categorias de cada local
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -68,17 +68,12 @@ projeto/
 
 ## 👥 Equipe
 
-- **Nome do Integrante 1** - [GitHub](https://github.com/usuario1) - Responsabilidade principal
-- **Nome do Integrante 2** - [GitHub](https://github.com/usuario2) - Estruturas de dados
-- **Nome do Integrante 3** - [GitHub](https://github.com/usuario3) - Interface e I/O
-- **Nome do Integrante 4** - [GitHub](https://github.com/usuario4) - Testes e documentação
+- **Anne Cavalheiro** - [GitHub](https://github.com/annecavalheiro) - Responsabilidade principal
+- **Anne Oliveira** - [GitHub](https://github.com/annehdob) - Estruturas de dados
+- **Anderson ** - [GitHub](https://github.com/andersonsas) - Interface e I/O
+- **Samily Moldes** - [GitHub]() - Testes e documentação
 
-## 📞 Contato
 
-Para dúvidas ou sugestões, entre em contato através de:
-- Email: contato@projeto.com
-- Issues: [GitHub Issues](https://github.com/seu-usuario/nome-do-projeto/issues)
 
----
 
 Desenvolvido com ❤️ pela equipe [Nome da Equipe] | Projeto acadêmico - [Nome da Instituição]

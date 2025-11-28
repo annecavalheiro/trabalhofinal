@@ -255,9 +255,9 @@ void inserirLugar() {
         /* categorias múltiplas */
         novoLugar.qtdTipos = 0;
         printf("\n--- Categorias do lugar (digite 0 para parar) ---\n");
-        printf("1-Patrimonio  2-Cultural  3-Igreja  4-Gastronomia  5-C.Brasileira\n");
-        printf("6-C.Regional  7-Indigena  8-Bar  9-Restaurante\n");
-        printf("10-Mercado  11-Museu  12-Cinema  13-Saude  14-Outro\n");
+        printf("1-Patrimonio Historico\n  2-Cultural\n  3-Igreja\n  4-Gastronomia\n  5-Culinaria Brasileira\n");
+        printf("6-Culinaria Regional\n  7-Indigena\n  8-Bar\n  9-Restaurante\n");
+        printf("10-Mercado\n  11-Museu\n  12-Cinema\n  13-Saude Publica\n  14-Outro\n");
 
         while (1) {
             printf("Escolha uma categoria (0 para finalizar): ");
@@ -612,3 +612,4 @@ void carregarTxt(const char *nome_arquivo) {
 
     fclose(f);
 }
+

@@ -76,4 +76,5 @@ projeto/
 
 
 
-Desenvolvido com ❤️ pela equipe [Nome da Equipe] | Projeto acadêmico - [Nome da Instituição]
+Desenvolvido com ❤️ pela equipe [Monstros SA] | Projeto acadêmico - [IFAM - TADS]
+

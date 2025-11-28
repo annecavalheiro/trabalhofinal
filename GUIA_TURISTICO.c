@@ -78,6 +78,8 @@ char* strcasestr_simples(const char* haystack, const char* needle);
 void trim_nl(char *s);
 void filtrarPorCategoria();
 void deletarLugar();
+void adicionarComentario();
+
 
 int main() {
     carregarTxt("locais.txt");
@@ -120,6 +122,7 @@ int main() {
             printf("3 - Filtrar por categorias\n");
             printf("4 - Salvar em TXT (locais.txt)\n");
             printf("5 - Deletar por nome do local\n");
+            printf("6 - Adicionar comentario\n");
             printf("0 - Sair\n");
             printf("Escolha uma opcao: ");
             if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
@@ -149,6 +152,10 @@ int main() {
                     limparTela();
                     deletarLugar();
                     pressioneEnter();
+                    break;
+                case 6:
+                    limparTela();
+                    adicionarComentario();
                     break;
                 case 0:
                     printf("\nEncerrando programa...\n");
@@ -707,7 +714,90 @@ void deletarLugar() {
     }
 }
 
+void adicionarComentario() {
+    if (numLugares == 0) {
+        printf("\nNenhum lugar cadastrado ainda.\n");
+        pressioneEnter();
+        return;
+    }
 
+    char nomeBusca[100];
+    int encontrado = -1;
+    
+    printf("\n=== ADICIONAR COMENTARIO ===\n");
+    printf("Digite o nome do local: ");
+    fgets(nomeBusca, sizeof(nomeBusca), stdin);
+    trim_nl(nomeBusca);
 
+    /* Busca o local pelo nome */
+    for (int i = 0; i < numLugares; i++) {
+        if (strcasestr_simples(listaLugares[i].nome, nomeBusca) != NULL) {
+            encontrado = i;
+            break;
+        }
+    }
 
+    if (encontrado == -1) {
+        printf("\nLocal nao encontrado!\n");
+        printf("Tente novamente com outro nome.\n");
+        pressioneEnter();
+        return;
+    }
 
+    /* Verifica se já atingiu o limite de comentários */
+    if (listaLugares[encontrado].numComentarios >= MAX_COMENTARIO) {
+        printf("\nLimite de comentarios atingido para este local!\n");
+        pressioneEnter();
+        return;
+    }
+
+    /* Mostra informações do local encontrado */
+    printf("\n--- Local encontrado: %s ---\n", listaLugares[encontrado].nome);
+    printf("Descricao: %s\n", listaLugares[encontrado].descricao);
+    printf("Ranking atual: %.1f\n", listaLugares[encontrado].ranking);
+    printf("Comentarios existentes: %d\n\n", listaLugares[encontrado].numComentarios);
+
+    /* Cria novo comentário */
+    Comentario novoComentario;
+    memset(&novoComentario, 0, sizeof(Comentario));
+
+    printf("--- Seu comentario ---\n");
+    printf("Seu nome: ");
+    fgets(novoComentario.autor, sizeof(novoComentario.autor), stdin);
+    trim_nl(novoComentario.autor);
+
+    printf("Sua nota (0.0 a 5.0): ");
+    if (scanf("%f", &novoComentario.nota) != 1) {
+        novoComentario.nota = 5.0f;
+    }
+    limparBuffer();
+
+    /* Valida a nota */
+    if (novoComentario.nota < 0.0f) novoComentario.nota = 0.0f;
+    if (novoComentario.nota > 5.0f) novoComentario.nota = 5.0f;
+
+    printf("Seu comentario (max 500 caracteres): ");
+    fgets(novoComentario.texto, sizeof(novoComentario.texto), stdin);
+    trim_nl(novoComentario.texto);
+
+    /* Adiciona o comentário ao local */
+    listaLugares[encontrado].comentarios[listaLugares[encontrado].numComentarios] = novoComentario;
+    listaLugares[encontrado].numComentarios++;
+
+    /* Recalcula o ranking médio */
+    float somaNotas = 0.0f;
+    for (int i = 0; i < listaLugares[encontrado].numComentarios; i++) {
+        somaNotas += listaLugares[encontrado].comentarios[i].nota;
+    }
+    listaLugares[encontrado].ranking = somaNotas / listaLugares[encontrado].numComentarios;
+
+    /* Salva automaticamente */
+    salvarTxt("locais.txt");
+
+    printf("\n" GREEN "Comentario adicionado com sucesso!" RESET "\n");
+    printf("Novo ranking do local: %.1f (baseado em %d comentarios)\n", 
+           listaLugares[encontrado].ranking, 
+           listaLugares[encontrado].numComentarios);
+    
+    pressioneEnter();
+}

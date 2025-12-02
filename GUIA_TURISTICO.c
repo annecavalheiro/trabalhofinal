@@ -49,13 +49,60 @@ void cabecalho() {
             printf(GREEN"                         "RED"N"GREEN"AVEG"RED"A"GREEN"MAZON - GUIA TURISTICO (CENTRO DE MANAUS)\n"RESET);
 }
 
-
+//icone cadastro de usuario 
+void iconecadastrousuario (){
+	printf("\t\t\t\t\t          "RESET"##########"GREEN"    ##        \n");
+	printf("\t\t\t\t\t       "RESET"####             "GREEN"##        \n");
+	printf("\t\t\t\t\t     "RESET"###    "RED"######   "GREEN"########     \n");
+	printf("\t\t\t\t\t    "RESET"##     "RED"#      #     "GREEN"##        \n");
+	printf("\t\t\t\t\t  "RESET"###     "RED"#        #    "GREEN"##        \n");
+	printf("\t\t\t\t\t  "RESET"#      "RED"#          #             \n");
+	printf("\t\t\t\t\t "RESET"##      "RED"#          #      "RESET"##     \n");
+	printf("\t\t\t\t\t"RESET"##        "RED"#        #        "RESET"##    \n");
+	printf("\t\t\t\t\t"RESET"#          "RED"#      #          "RESET"#    \n");
+	printf("\t\t\t\t\t"RESET"#           "RED"######           "RESET"#    \n");
+	printf("\t\t\t\t\t"RESET"#         "RED"#        #         "RESET"#    \n");
+	printf("\t\t\t\t\t"RESET"#        "RED"#          #        "RESET"#    \n");
+	printf("\t\t\t\t\t"RESET"##      "RED"#            #      "RESET"##    \n");
+	printf("\t\t\t\t\t "RESET"##    "RED"#              #    "RESET"##     \n");
+	printf("\t\t\t\t\t  "RESET"#   "RED"#                #   "RESET"#      \n");
+	printf("\t\t\t\t\t  "RESET"## "RED"#                  #"RESET" ##      \n");
+	printf("\t\t\t\t\t    "RESET"##                  "RESET"##        \n");
+	printf("\t\t\t\t\t     "RESET"###              "RESET"###         \n");
+	printf("\t\t\t\t\t       "RESET"####        "RESET"####           \n");
+	printf("\t\t\t\t\t          "RESET"##########              \n");
+	printf("\n");
+}
+// icone login
+void iconelogin(){
+	printf("\t\t\t\t\t           ##########              \n");
+	printf("\t\t\t\t\t        ####        ####           \n");
+	printf("\t\t\t\t\t      ###    "RED"######    "RESET"###         \n");
+	printf("\t\t\t\t\t     ##     "RED"#      #     "RESET"##        \n");
+	printf("\t\t\t\t\t    ##     "RED"#        #     "RESET"###      \n");
+	printf("\t\t\t\t\t          "RED"#          #      "RESET"#      \n");
+	printf("\t\t\t\t\t     "GREEN"#    "RED"#          #      "RESET"##     \n");
+	printf("\t\t\t\t\t      "GREEN"#    "RED"#        #        "RESET"##    \n");
+	printf("\t\t\t\t\t      "GREEN"###   "RED"#      #          "RESET"#    \n");
+	printf("\t\t\t\t\t"GREEN"###########  "RED"######           "RESET"#    \n");
+	printf("\t\t\t\t\t      "GREEN"###  "RED"#       #         "RESET"#     \n");
+	printf("\t\t\t\t\t      "GREEN"#   "RED"#          #        "RESET"#    \n");
+	printf("\t\t\t\t\t     "GREEN"#   "RED"#            #      "RESET"##    \n");
+	printf("\t\t\t\t\t        "RED"#              #    "RESET"##     \n");
+	printf("\t\t\t\t\t       "RED"#                #   "RESET"#      \n");
+	printf("\t\t\t\t\t   ###"RED"#                  #"RESET"###      \n");
+	printf("\t\t\t\t\t     ##                  ##        \n");
+	printf("\t\t\t\t\t      ###              ###         \n");
+	printf("\t\t\t\t\t        ####        ####           \n");
+	printf("\t\t\t\t\t           ##########              \n");
+	printf("\n");
+}
 // CADASTRAR USUARIO
 
 void cadastrarUsuario() {
     limparTela();
-    cabecalho();
-
+    
+	iconecadastrousuario();
     char usuario[50], senha[50];
     FILE *arq = fopen("usuarios.txt", "a");
 
@@ -66,6 +113,7 @@ void cadastrarUsuario() {
 
     printf(GREEN"=== CADASTRAR USUARIO ===\n\n"RESET);
 
+	
     printf("Usuario: ");
     scanf("%s", usuario);
 
@@ -85,7 +133,7 @@ void cadastrarUsuario() {
 
 int login() {
     limparTela();
-    cabecalho();
+    iconelogin();
 
     char usuario[50], senha[50], fileUser[50], filePass[50];
     FILE *arq = fopen("usuarios.txt", "r");
@@ -228,7 +276,6 @@ int menuInicial() {
         limparTela();
         cabecalho();
 
-        printf(GREEN"=== BEM-VINDO ===\n\n"RESET);
         printf("1 - Login\n");
         printf("2 - Cadastrar usuario\n");
         printf("3 - Login como Administrador\n");
@@ -270,6 +317,7 @@ int main() {
 
     return 0;
 }
+
 
 
 

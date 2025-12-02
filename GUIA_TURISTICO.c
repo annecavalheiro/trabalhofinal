@@ -63,7 +63,7 @@ typedef struct {
 Local listaLugares[MAX_LOCAIS];
 int numLugares = 0;
 
-/* protótipos */
+/* protÃ³tipos */
 void inserirLugar();
 void listarLugares();
 const char* obterNomeTipoDeLugar(TipoDeLugar tipo);
@@ -297,8 +297,8 @@ void filtrarPorCategoria() {
 
     limparTela();
     printf("\n\t\t\t\t=== RESULTADOS DA BUSCA ===\n");
-
-    for (int i = 0; i < numLugares; i++) {
+	int i; 
+    for (i = 0; i < numLugares; i++) {
         // Verifica apenas categorias EXATAS (aqui escolhi tratar quando qtdTipos == 1 e igual)
         if (listaLugares[i].qtdTipos == 1 && listaLugares[i].tipos[0] == categoriaEscolhida) {
             printf("\n\t\t\t\t--- %s ---\n", listaLugares[i].nome);
@@ -398,7 +398,7 @@ void inserirLugar() {
     fgets(novoLugar.contato.site, sizeof(novoLugar.contato.site), stdin);
     trim_nl(novoLugar.contato.site);
 
-    /* categorias múltiplas */
+    /* categorias mÃºltiplas */
     novoLugar.qtdTipos = 0;
     printf("\n\t\t\t\t--- Categorias do lugar (digite 0 para parar) ---\n");
     printf("\t\t\t\t1-Patrimonio Historico\n");
@@ -518,20 +518,23 @@ void listarLugares() {
         printf("Nenhum lugar cadastrado.\n");
         return;
     }
-    for (int i = 0; i < numLugares; i++) {
+    int i;
+    for (i = 0; i < numLugares; i++) {
         Local *l = &listaLugares[i];
         printf("%d) %s\n", i+1, l->nome);
         printf("\t\t\t\tDescricao: %.80s%s\n", l->descricao, (strlen(l->descricao) > 80 ? "..." : ""));
         printf("\t\t\t\tEndereco: %s CEP: %s\n", l->endereco.rua, l->endereco.cep);
         printf("\t\t\t\tContato: ");
-        for (int t = 0; t < l->contato.qtdeTelefone; t++) {
+        int t;
+        for (t = 0; t < l->contato.qtdeTelefone; t++) {
             if (t) printf(", ");
             printf("%s", l->contato.telefones[t]);
         }
         if (l->contato.qtdeTelefone == 0) printf("nenhum");
         printf("\n");
         printf("\t\t\t\tCategorias: ");
-        for (int c = 0; c < l->qtdTipos; c++) {
+        int c;
+        for (c = 0; c < l->qtdTipos; c++) {
             if (c) printf(", ");
             printf("%s", obterNomeTipoDeLugar(l->tipos[c]));
         }
@@ -569,7 +572,7 @@ void salvarTxt(const char *nome_arquivo) {
 void carregarTxt(const char *nome_arquivo) {
     FILE *f = fopen(nome_arquivo, "rb");
     if (!f) {
-        // arquivo pode não existir ainda; não tratar como erro crítico
+        // arquivo pode nÃ£o existir ainda; nÃ£o tratar como erro crÃ­tico
         return;
     }
     int q = 0;

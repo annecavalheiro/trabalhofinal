@@ -63,7 +63,7 @@ typedef struct {
 Local listaLugares[MAX_LOCAIS];
 int numLugares = 0;
 
-/* protÃ³tipos */
+/* prototipos */
 void inserirLugar();
 void listarLugares();
 const char* obterNomeTipoDeLugar(TipoDeLugar tipo);
@@ -81,8 +81,8 @@ int loginAdmin();
 void menuUsuario();
 void menuAdmin();
 int menuInicial();
+void iconecomentarios();
 
-/* FUNCOES IMPLEMENTADAS */
 
 void limparTela() {
 #ifdef _WIN32
@@ -192,23 +192,23 @@ void iconeadministrador(){
 }
 
 void iconelistar(){
-    printf("\t\t\t\t\t             "GREEN"########################            \n");
-    printf("\t\t\t\t\t             "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t             "GREEN"#  "RED"##                  "GREEN"#\n");
-    printf("\t\t\t\t\t             "GREEN"#  "RED"## ______________   "GREEN"#\n");
-    printf("\t\t\t\t\t             "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t             "GREEN"#  "RED"##                  "GREEN"#\n");
-    printf("\t\t\t\t\t             "GREEN"#  "RED"## ______________   "GREEN"#\n");
-    printf("\t\t\t\t\t             "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t             "GREEN"#  "RED"##                  "GREEN"#\n");
-    printf("\t\t\t\t\t             "GREEN"#  "RED"## ______________   "GREEN"#\n");
-    printf("\t\t\t\t\t             "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t             "GREEN"#  "RED"##                  "GREEN"#\n");
-    printf("\t\t\t\t\t             "GREEN"#  "RED"## ______________   "GREEN"#\n");
-    printf("\t\t\t\t\t             "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t             "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t             "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t             "GREEN"########################            \n");
+    printf("\t\t\t\t\t         "GREEN"########################            \n");
+    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
+    printf("\t\t\t\t\t         "GREEN"#  "RED"##                  "GREEN"#\n");
+    printf("\t\t\t\t\t         "GREEN"#  "RED"## ______________   "GREEN"#\n");
+    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
+    printf("\t\t\t\t\t         "GREEN"#  "RED"##                  "GREEN"#\n");
+    printf("\t\t\t\t\t         "GREEN"#  "RED"## ______________   "GREEN"#\n");
+    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
+    printf("\t\t\t\t\t         "GREEN"#  "RED"##                  "GREEN"#\n");
+    printf("\t\t\t\t\t         "GREEN"#  "RED"## ______________   "GREEN"#\n");
+    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
+    printf("\t\t\t\t\t         "GREEN"#  "RED"##                  "GREEN"#\n");
+    printf("\t\t\t\t\t         "GREEN"#  "RED"## ______________   "GREEN"#\n");
+    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
+    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
+    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
+    printf("\t\t\t\t\t         "GREEN"########################            \n");
     printf("\n");
 }
 
@@ -228,6 +228,110 @@ void iconefiltrar(){
     printf("\t\t\t\t\t                         # /        \n");
     printf("\t\t\t\t\t                         #          \n");
     printf("\n");
+}
+
+void iconecomentarios(){
+    printf("\t\t\t\t\t             "GREEN"###########    \n");
+    printf("\t\t\t\t\t           "GREEN"#  "RED"________  "GREEN"#   \n");
+    printf("\t\t\t\t\t          "GREEN"#   "RED"________   "GREEN"#  \n");
+    printf("\t\t\t\t\t         "GREEN"#    "RED"________    "GREEN"# \n");
+    printf("\t\t\t\t\t         "GREEN"#    "RED"________    "GREEN"# \n");
+    printf("\t\t\t\t\t          "GREEN"#   "RED"________   "GREEN"#  \n");
+    printf("\t\t\t\t\t           "GREEN"#            #   \n");
+    printf("\t\t\t\t\t            "GREEN"#   ########    \n");
+    printf("\t\t\t\t\t             "GREEN"#  #           \n");
+    printf("\t\t\t\t\t              "GREEN"##            \n");
+    printf("\t\t\t\t\t               "GREEN"#            \n");
+    printf("\n");
+}
+
+void adicionarComentario() {
+    iconecomentarios();
+    if (numLugares == 0) {
+        printf(RED"\nNenhum lugar cadastrado para comentar.\n"RESET);
+        pressioneEnter();
+        return;
+    }
+
+    listarLugares();
+    printf("\nDigite o numero do lugar que deseja comentar: ");
+    int opcao;
+
+    if (scanf("%d", &opcao) != 1 || opcao < 1 || opcao > numLugares) {
+        limparBuffer();
+        printf(RED"Opcao invalida!\n"RESET);
+        pressioneEnter();
+        return;
+    }
+    limparBuffer();
+
+    Local *l = &listaLugares[opcao - 1];
+
+    if (l->numComentarios >= MAX_COMENTARIO) {
+        printf(RED"Este local atingiu o limite de comentarios.\n"RESET);
+        pressioneEnter();
+        return;
+    }
+
+    Comentario *c = &l->comentarios[l->numComentarios];
+
+    printf("\nAutor do comentario: ");
+    fgets(c->autor, sizeof(c->autor), stdin);
+    trim_nl(c->autor);
+
+    printf("Digite seu comentario: ");
+    fgets(c->texto, sizeof(c->texto), stdin);
+    trim_nl(c->texto);
+
+    printf("Nota (0 a 5): ");
+    if (scanf("%f", &c->nota) != 1 || c->nota < 0 || c->nota > 5) {
+        limparBuffer();
+        printf(RED"Nota invalida!\n"RESET);
+        return;
+    }
+    limparBuffer();
+
+    l->numComentarios++;
+
+    // recalcular ranking maeio
+    float soma = 0;
+    for (int i = 0; i < l->numComentarios; i++) {
+        soma += l->comentarios[i].nota;
+    }
+    l->ranking = soma / l->numComentarios;
+
+    printf(GREEN"\nComentario adicionado com sucesso!\n"RESET);
+    pressioneEnter();
+}
+
+void listarComentarios() {
+    listarLugares();
+    printf("\nEscolha o numero do lugar: ");
+    int escolha;
+
+    if (scanf("%d", &escolha) != 1 || escolha < 1 || escolha > numLugares) {
+        limparBuffer();
+        printf(RED"Opcao invalida!\n"RESET);
+        return;
+    }
+    limparBuffer();
+
+    Local *l = &listaLugares[escolha - 1];
+
+    printf(GREEN"\n=== Comentarios de %s ===\n\n"RESET, l->nome);
+
+    if (l->numComentarios == 0) {
+        printf("Nenhum comentario ainda.\n");
+        return;
+    }
+
+    for (int i = 0; i < l->numComentarios; i++) {
+        Comentario *c = &l->comentarios[i];
+        printf("Autor: %s\n", c->autor);
+        printf("Comentario: %s\n", c->texto);
+        printf("Nota: %.1f\n", c->nota);
+        printf("--------------------------\n");
+    }
 }
 
 void limparBuffer() {
@@ -333,12 +437,12 @@ void cadastrarUsuario() {
         return;
     }
 
-    printf(GREEN"\t\t\t\t=== CADASTRAR USUARIO ===\n\n"RESET);
+    printf(GREEN"\t\t\t\t\t  === CADASTRAR USUARIO ===\n\n"RESET);
 
-    printf("\t\t\t\tUsuario: ");
+    printf("\t\t\t\t\tUsuario: ");
     if (scanf("%49s", usuario) != 1) { limparBuffer(); fclose(arq); return; }
 
-    printf("\t\t\t\tSenha: ");
+    printf("\t\t\t\t\tSenha: ");
     if (scanf("%49s", senha) != 1) { limparBuffer(); fclose(arq); return; }
 
     fprintf(arq, "%s %s\n", usuario, senha);
@@ -351,11 +455,12 @@ void cadastrarUsuario() {
 }
 
 void inserirLugar() {
+    int retorno = 1;
     if (numLugares >= MAX_LOCAIS) {
         printf("\nLista cheia!\n");
         return;
     }
-
+    
     Local novoLugar;
     int opcao, i;
     memset(&novoLugar, 0, sizeof(Local));
@@ -449,12 +554,12 @@ int login() {
     char usuario[50], senha[50], fileUser[50], filePass[50];
     FILE *arq = fopen("usuarios.txt", "r");
 
-    printf(GREEN"\t\t\t\t=== LOGIN ===\n\n"RESET);
+    printf(GREEN"\t\t\t\t\t\t === LOGIN ===\n\n"RESET);
 
-    printf("\t\t\t\tUsuario: ");
+    printf("\t\t\t\t\tUsuario: ");
     if (scanf("%49s", usuario) != 1) { limparBuffer(); return 0; }
 
-    printf("\t\t\t\tSenha: ");
+    printf("\t\t\t\t\tSenha: ");
     if (scanf("%49s", senha) != 1) { limparBuffer(); return 0; }
 
     if (!arq) {
@@ -492,9 +597,9 @@ int loginAdmin() {
 
     char senha[50];
 
-    printf(GREEN"\t\t\t\t=== LOGIN DO ADMINISTRADOR ===\n\n"RESET);
+    printf(GREEN"\t\t\t\t\t=== LOGIN DO ADMINISTRADOR ===\n\n"RESET);
 
-    printf("\t\t\t\tDigite a senha do administrador: ");
+    printf("\t\t\t\t\tDigite a senha do administrador: ");
     if (scanf("%49s", senha) != 1) { limparBuffer(); return 0; }
 
     // DEFINA A SENHA DO ADMIN AQUI:
@@ -513,7 +618,7 @@ int loginAdmin() {
 void listarLugares() {
     limparTela();
     iconelistar();
-    printf(GREEN"\t\t\t\t=== LISTA DE LUGARES (%d) ===\n\n"RESET, numLugares);
+    printf(GREEN"\t\t\t\t\t\t=== LISTA DE LUGARES (%d) ===\n\n"RESET, numLugares);
     if (numLugares == 0) {
         printf("Nenhum lugar cadastrado.\n");
         return;
@@ -522,9 +627,9 @@ void listarLugares() {
     for (i = 0; i < numLugares; i++) {
         Local *l = &listaLugares[i];
         printf("%d) %s\n", i+1, l->nome);
-        printf("\t\t\t\tDescricao: %.80s%s\n", l->descricao, (strlen(l->descricao) > 80 ? "..." : ""));
-        printf("\t\t\t\tEndereco: %s CEP: %s\n", l->endereco.rua, l->endereco.cep);
-        printf("\t\t\t\tContato: ");
+        printf("\t\t\t\t\tDescricao: %.80s%s\n", l->descricao, (strlen(l->descricao) > 80 ? "..." : ""));
+        printf("\t\t\t\t\tEndereco: %s CEP: %s\n", l->endereco.rua, l->endereco.cep);
+        printf("\t\t\t\t\tContato: ");
         int t;
         for (t = 0; t < l->contato.qtdeTelefone; t++) {
             if (t) printf(", ");
@@ -572,7 +677,7 @@ void salvarTxt(const char *nome_arquivo) {
 void carregarTxt(const char *nome_arquivo) {
     FILE *f = fopen(nome_arquivo, "rb");
     if (!f) {
-        // arquivo pode nÃ£o existir ainda; nÃ£o tratar como erro crÃ­tico
+        // arquivo pode nÃ£o existir ainda; nÃ£o tratar como erro critico
         return;
     }
     int q = 0;
@@ -598,12 +703,13 @@ void menuUsuario() {
         limparTela();
         cabecalho();
 
-        printf(GREEN"\t\t\t\t=== MENU DO USUARIO ===\n\n"RESET);
-        printf("\t\t\t\t1 - Listar locais\n");
-        printf("\t\t\t\t2 - Filtrar por Categoria\n");
-        printf("\t\t\t\t3 - Comentarios (nao implementado)\n");
-        printf("\t\t\t\t4 - Sair\n\n");
-        printf("\t\t\t\tEscolha: ");
+        printf(GREEN"\t\t\t\t\t\t   === MENU DO USUARIO ===\n\n"RESET);
+        printf("\t\t\t\t\t\t1 - Listar locais\n");
+        printf("\t\t\t\t\t\t2 - Filtrar por Categoria\n");
+        printf("\t\t\t\t\t\t3 - Comentar um lugar\n");
+        printf("\t\t\t\t\t\t4 - Ver comentarios de um lugar\n");
+        printf("\t\t\t\t\t\t5 - Sair\n\n");
+        printf("\t\t\t\t\t\tEscolha: ");
         if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
         limparBuffer();
 
@@ -612,8 +718,9 @@ void menuUsuario() {
         switch(opcao) {
             case 1: listarLugares(); pressioneEnter(); break;
             case 2: filtrarPorCategoria(); break;
-            case 3: printf("Comentarios - funcao pendente.\n"); pressioneEnter(); break;
-            case 4: return;
+            case 3: adicionarComentario(); break;
+            case 4: listarComentarios();break;
+            case 5: return;
             default: printf(RED"Opcao invalida!\n"RESET); pressioneEnter();
         }
 
@@ -660,12 +767,12 @@ int menuInicial() {
         limparTela();
         cabecalho();
 
-        printf("\t\t\t\t1 - Login\n");
-        printf("\t\t\t\t2 - Cadastrar usuario\n");
-        printf("\t\t\t\t3 - Login como Administrador\n");
-        printf("\t\t\t\t4 - Sair\n");
+        printf("\t\t\t\t\t\t1 - Login\n");
+        printf("\t\t\t\t\t\t2 - Cadastrar usuario\n");
+        printf("\t\t\t\t\t\t3 - Login como Administrador\n");
+        printf("\t\t\t\t\t\t4 - Sair\n");
 
-        printf("\t\t\t\tEscolha: ");
+        printf("\t\t\t\t\t\tEscolha: ");
         if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
         limparBuffer();
 
@@ -706,3 +813,4 @@ int main() {
 
     return 0;
 }
+

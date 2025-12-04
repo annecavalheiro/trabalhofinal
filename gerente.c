@@ -12,11 +12,12 @@ Local listaLugares[MAX_LOCAIS];
 int numLugares = 0;
 
 void inserirLugar() {
+    int retorno = 1;
     if (numLugares >= MAX_LOCAIS) {
         printf("\nLista cheia!\n");
         return;
     }
-
+    
     Local novoLugar;
     int opcao, i;
     memset(&novoLugar, 0, sizeof(Local));
@@ -32,7 +33,7 @@ void inserirLugar() {
     fgets(novoLugar.descricao, sizeof(novoLugar.descricao), stdin);
     trim_nl(novoLugar.descricao);
 
-    printf("\n\t\t\t\t--- Endereco ---\nRua: ");
+    printf("\n\t\t\t\t--- Endereco ---\n\t\t\t\tRua: ");
     fgets(novoLugar.endereco.rua, sizeof(novoLugar.endereco.rua), stdin);
     trim_nl(novoLugar.endereco.rua);
 
@@ -40,7 +41,7 @@ void inserirLugar() {
     fgets(novoLugar.endereco.cep, sizeof(novoLugar.endereco.cep), stdin);
     trim_nl(novoLugar.endereco.cep);
 
-    printf("\n\t\t\t\t--- Contato ---\nQuantos telefones? (max 3): ");
+    printf("\n\t\t\t\t--- Contato ---\n\t\t\t\tQuantos telefones? (max 3): ");
     if (scanf("%d", &novoLugar.contato.qtdeTelefone) != 1) novoLugar.contato.qtdeTelefone = 0;
     if (novoLugar.contato.qtdeTelefone > MAX_TELEFONES) novoLugar.contato.qtdeTelefone = MAX_TELEFONES;
     limparBuffer();
@@ -58,10 +59,12 @@ void inserirLugar() {
     printf("\t\t\t\tSite: ");
     fgets(novoLugar.contato.site, sizeof(novoLugar.contato.site), stdin);
     trim_nl(novoLugar.contato.site);
-
-    /* categorias mÃºltiplas */
+	limparTela();
+	printf("\n\t\t\t\t=== CADASTRO DE NOVO LUGAR ===\n");
+	
+    /* categorias multiplas */
     novoLugar.qtdTipos = 0;
-    printf("\n\t\t\t\t--- Categorias do lugar (digite 0 para parar) ---\n");
+    printf("\n\t\t\t\t--- Categorias do lugar --- \n");
     printf("\t\t\t\t1-Patrimonio Historico\n");
     printf("\t\t\t\t2-Cultural\n");
     printf("\t\t\t\t3-Igreja\n");
@@ -75,10 +78,11 @@ void inserirLugar() {
     printf("\t\t\t\t11-Museu\n");
     printf("\t\t\t\t12-Cinema\n");
     printf("\t\t\t\t13-Saude\n");
-    printf("\t\t\t\t14-Outro\n");
+    printf("\t\t\t\t14-Outro\n\n");
 
+	printf("\t\t\t\tEscolha a(s) categoria(s) - "RED"(informe uma ou \n\t\t\t\tmais categorias que se encaixam ao local. Para encerrar a \n\t\t\t\tinclusao de categorias, digite 0):\n"RESET"");
     while (1) {
-        printf("\t\t\t\tEscolha uma categoria (0 para finalizar): ");
+    	printf("\t\t\t\tEscolha: ");
         if (scanf("%d", &opcao) != 1) { limparBuffer(); continue; }
         limparBuffer();
 
@@ -94,12 +98,31 @@ void inserirLugar() {
             break;
         }
     }
+        while (1) {
+        printf("\t\t\t\tValor da entrada (R$): ");  
+        
+        if (scanf("%f", &novoLugar.entrada) != 1) {
+            limparBuffer();
+            printf(RED"\t\t\t\tValor invalido! Tente novamente.\n"RESET);
+            continue;
+        }
+        limparBuffer();
+
+        if (novoLugar.entrada < 0) {
+            printf(RED"\t\t\t\tO valor nao pode ser negativo.\n"RESET);
+            continue;
+        }
+
+        break;
+    }
+
 
     novoLugar.ranking = 0.0f;
     novoLugar.numComentarios = 0;
     novoLugar.entrada = 0.0f;
 
     listaLugares[numLugares++] = novoLugar;
+    printf("\n");
     printf(GREEN"\nLugar cadastrado com sucesso!\n"RESET);
 }
 

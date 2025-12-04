@@ -1,4 +1,4 @@
-#include <stdio.h>
+lude <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -213,20 +213,20 @@ void iconelistar(){
 }
 
 void iconefiltrar(){
-	printf("\t\t\t\t\t                      "GREEN"##########    \n");
-    printf("\t\t\t\t\t                      "GREEN"# "RED"______ "GREEN"#    \n");
-    printf("\t\t\t\t\t                      "GREEN"# "RED"______ "GREEN"#    \n");
-    printf("\t\t\t\t\t                      "GREEN"# "RED"______ "GREEN"#    \n");
-    printf("\t\t\t\t\t                      "GREEN"#        "GREEN"#"RESET"    \n");
-    printf("\t\t\t\t\t                    ##############  \n");
-    printf("\t\t\t\t\t                     #          #   \n");
-    printf("\t\t\t\t\t                      #        #    \n");
-    printf("\t\t\t\t\t                       #      #     \n");
-    printf("\t\t\t\t\t                        #    #      \n");
-    printf("\t\t\t\t\t                         #  #       \n");
-    printf("\t\t\t\t\t                         #  #       \n");
-    printf("\t\t\t\t\t                         # /        \n");
-    printf("\t\t\t\t\t                         #          \n");
+	printf("\t\t\t\t\t                    "GREEN"##########    \n");
+    printf("\t\t\t\t\t                    "GREEN"# "RED"______ "GREEN"#    \n");
+    printf("\t\t\t\t\t                    "GREEN"# "RED"______ "GREEN"#    \n");
+    printf("\t\t\t\t\t                    "GREEN"# "RED"______ "GREEN"#    \n");
+    printf("\t\t\t\t\t                    "GREEN"#        "GREEN"#"RESET"    \n");
+    printf("\t\t\t\t\t                  ##############  \n");
+    printf("\t\t\t\t\t                   #          #   \n");
+    printf("\t\t\t\t\t                    #        #    \n");
+    printf("\t\t\t\t\t                     #      #     \n");
+    printf("\t\t\t\t\t                      #    #      \n");
+    printf("\t\t\t\t\t                       #  #       \n");
+    printf("\t\t\t\t\t                       #  #       \n");
+    printf("\t\t\t\t\t                       # /        \n");
+    printf("\t\t\t\t\t                       #          \n");
     printf("\n");
 }
 
@@ -254,7 +254,7 @@ void adicionarComentario() {
     }
 
     listarLugares();
-    printf("\nDigite o numero do lugar que deseja comentar: ");
+    printf("\n\t\t\t\tDigite o numero do lugar que deseja comentar: ");
     int opcao;
 
     if (scanf("%d", &opcao) != 1 || opcao < 1 || opcao > numLugares) {
@@ -275,25 +275,26 @@ void adicionarComentario() {
 
     Comentario *c = &l->comentarios[l->numComentarios];
 
-    printf("\nAutor do comentario: ");
+    printf("\n\t\t\t\tAutor do comentario: ");
     fgets(c->autor, sizeof(c->autor), stdin);
     trim_nl(c->autor);
 
-    printf("Digite seu comentario: ");
+    printf("\t\t\t\tDigite seu comentario: ");
     fgets(c->texto, sizeof(c->texto), stdin);
     trim_nl(c->texto);
 
-    printf("Nota (0 a 5): ");
+    printf("\t\t\t\tNota (0 a 5): ");
     if (scanf("%f", &c->nota) != 1 || c->nota < 0 || c->nota > 5) {
         limparBuffer();
         printf(RED"Nota invalida!\n"RESET);
+        pressioneEnter();
         return;
     }
     limparBuffer();
 
     l->numComentarios++;
 
-    // recalcular ranking maeio
+    // recalcular ranking 
     float soma = 0;
     for (int i = 0; i < l->numComentarios; i++) {
         soma += l->comentarios[i].nota;
@@ -306,7 +307,7 @@ void adicionarComentario() {
 
 void listarComentarios() {
     listarLugares();
-    printf("\nEscolha o numero do lugar: ");
+    printf("\n\t\t\t\tEscolha o numero do lugar: ");
     int escolha;
 
     if (scanf("%d", &escolha) != 1 || escolha < 1 || escolha > numLugares) {
@@ -315,23 +316,27 @@ void listarComentarios() {
         return;
     }
     limparBuffer();
-
+    limparTela();
+    
     Local *l = &listaLugares[escolha - 1];
 
-    printf(GREEN"\n=== Comentarios de %s ===\n\n"RESET, l->nome);
+    printf(GREEN"\n\t\t\t\t\t=== Comentarios de %s ===\n\n"RESET, l->nome);
 
     if (l->numComentarios == 0) {
-        printf("Nenhum comentario ainda.\n");
+        printf("\t\t\t\t\tNenhum comentario ainda.\n");
+        pressioneEnter();
         return;
     }
 
     for (int i = 0; i < l->numComentarios; i++) {
         Comentario *c = &l->comentarios[i];
-        printf("Autor: %s\n", c->autor);
-        printf("Comentario: %s\n", c->texto);
-        printf("Nota: %.1f\n", c->nota);
-        printf("--------------------------\n");
+        printf("\t\t\t\t\tAutor: %s\n", c->autor);
+        printf("\t\t\t\t\tComentario: %s\n", c->texto);
+        printf("\t\t\t\t\tNota: %.1f\n", c->nota);
+        printf("\t\t\t\t\t--------------------------\n");
+        pressioneEnter();
     }
+    
 }
 
 void limparBuffer() {
@@ -371,7 +376,7 @@ TipoDeLugar obterEnumTipoDeLugar(int opcao) {
 }
 
 void filtrarPorCategoria() {
-	iconefiltrar();
+    iconefiltrar();
     if (numLugares == 0) {
         printf("\nNenhum lugar cadastrado.\n");
         pressioneEnter();
@@ -379,14 +384,14 @@ void filtrarPorCategoria() {
     }
 
     int opcao;
-    
-    printf("\n\t\t\t\t=== FILTRAR POR CATEGORIA ===\n");
-    printf("\t1 - Patrimonio Historico     6 - Culinaria Regional      11 - Museu\n");
-    printf("\t2 - Cultural                 7 - Indigena                12 - Cinema\n");
-    printf("\t3 - Igreja                   8 - Bar                     13 - Saude Publica\n");
-    printf("\t4 - Gastronomia              9 - Restaurante             14 - Outro\n");
-    printf("\t5 - Culinaria Brasileira     10 - Mercado\n");
-    printf("\tEscolha uma categoria: ");
+
+    printf("\n\t\t\t\t\t\t=== FILTRAR POR CATEGORIA ===\n");
+    printf("\t\t\t   1 - Patrimonio Historico     6 - Culinaria Regional      11 - Museu\n");
+    printf("\t\t\t   2 - Cultural                 7 - Indigena                12 - Cinema\n");
+    printf("\t\t\t   3 - Igreja                   8 - Bar                     13 - Saude Publica\n");
+    printf("\t\t\t   4 - Gastronomia              9 - Restaurante             14 - Outro\n");
+    printf("\t\t\t   5 - Culinaria Brasileira     10 - Mercado\n");
+    printf("\t\t\t   Escolha uma categoria: ");
 
     if (scanf("%d", &opcao) != 1 || opcao < 1 || opcao > 14) {
         limparBuffer();
@@ -400,25 +405,33 @@ void filtrarPorCategoria() {
     int encontrados = 0;
 
     limparTela();
-    printf("\n\t\t\t\t=== RESULTADOS DA BUSCA ===\n");
-	int i; 
-    for (i = 0; i < numLugares; i++) {
-        // Verifica apenas categorias EXATAS (aqui escolhi tratar quando qtdTipos == 1 e igual)
-        if (listaLugares[i].qtdTipos == 1 && listaLugares[i].tipos[0] == categoriaEscolhida) {
-            printf("\n\t\t\t\t--- %s ---\n", listaLugares[i].nome);
-            printf("\t\t\t\tDescricao: %s\n", listaLugares[i].descricao);
-            printf("\t\t\t\tEndereco: %s, CEP %s\n",
+    printf("\n\t\t\t\t\t\t=== RESULTADOS DA BUSCA ===\n");
+
+    for (int i = 0; i < numLugares; i++) {
+
+        int temCategoria = 0;
+        for (int t = 0; t < listaLugares[i].qtdTipos; t++) {
+            if (listaLugares[i].tipos[t] == categoriaEscolhida) {
+                temCategoria = 1;
+                break;
+            }
+        }
+
+        if (temCategoria) {
+            printf("\n\t\t\t\t\t--- %s ---\n", listaLugares[i].nome);
+            printf("\t\t\t\t\tDescricao: %s\n", listaLugares[i].descricao);
+            printf("\t\t\t\t\tEndereco: %s, CEP %s\n",
                 listaLugares[i].endereco.rua,
                 listaLugares[i].endereco.cep);
-            printf("\t\t\t\tEntrada: R$ %.2f\n", listaLugares[i].entrada);
-            printf("\t\t\t\tRanking: %.1f\n", listaLugares[i].ranking);
+            printf("\t\t\t\t\tEntrada: R$ %.2f\n", listaLugares[i].entrada);
+            printf("\t\t\t\t\tRanking: %.1f\n", listaLugares[i].ranking);
 
             encontrados++;
         }
     }
 
     if (encontrados == 0) {
-        printf("\nNenhum lugar encontrado para essa categoria exata.\n");
+        printf("\nNenhum lugar encontrado para essa categoria.\n");
     }
 
     printf("\n");
@@ -476,7 +489,7 @@ void inserirLugar() {
     fgets(novoLugar.descricao, sizeof(novoLugar.descricao), stdin);
     trim_nl(novoLugar.descricao);
 
-    printf("\n\t\t\t\t--- Endereco ---\nRua: ");
+    printf("\n\t\t\t\t--- Endereco ---\n\t\t\t\tRua: ");
     fgets(novoLugar.endereco.rua, sizeof(novoLugar.endereco.rua), stdin);
     trim_nl(novoLugar.endereco.rua);
 
@@ -484,7 +497,7 @@ void inserirLugar() {
     fgets(novoLugar.endereco.cep, sizeof(novoLugar.endereco.cep), stdin);
     trim_nl(novoLugar.endereco.cep);
 
-    printf("\n\t\t\t\t--- Contato ---\nQuantos telefones? (max 3): ");
+    printf("\n\t\t\t\t--- Contato ---\n\t\t\t\tQuantos telefones? (max 3): ");
     if (scanf("%d", &novoLugar.contato.qtdeTelefone) != 1) novoLugar.contato.qtdeTelefone = 0;
     if (novoLugar.contato.qtdeTelefone > MAX_TELEFONES) novoLugar.contato.qtdeTelefone = MAX_TELEFONES;
     limparBuffer();
@@ -502,10 +515,12 @@ void inserirLugar() {
     printf("\t\t\t\tSite: ");
     fgets(novoLugar.contato.site, sizeof(novoLugar.contato.site), stdin);
     trim_nl(novoLugar.contato.site);
-
-    /* categorias mÃºltiplas */
+	limparTela();
+	printf("\n\t\t\t\t=== CADASTRO DE NOVO LUGAR ===\n");
+	
+    /* categorias multiplas */
     novoLugar.qtdTipos = 0;
-    printf("\n\t\t\t\t--- Categorias do lugar (digite 0 para parar) ---\n");
+    printf("\n\t\t\t\t--- Categorias do lugar --- \n");
     printf("\t\t\t\t1-Patrimonio Historico\n");
     printf("\t\t\t\t2-Cultural\n");
     printf("\t\t\t\t3-Igreja\n");
@@ -519,10 +534,11 @@ void inserirLugar() {
     printf("\t\t\t\t11-Museu\n");
     printf("\t\t\t\t12-Cinema\n");
     printf("\t\t\t\t13-Saude\n");
-    printf("\t\t\t\t14-Outro\n");
+    printf("\t\t\t\t14-Outro\n\n");
 
+	printf("\t\t\t\tEscolha a(s) categoria(s) - "RED"(informe uma ou \n\t\t\t\tmais categorias que se encaixam ao local. Para encerrar a \n\t\t\t\tinclusao de categorias, digite 0):\n"RESET"");
     while (1) {
-        printf("\t\t\t\tEscolha uma categoria (0 para finalizar): ");
+    	printf("\t\t\t\tEscolha: ");
         if (scanf("%d", &opcao) != 1) { limparBuffer(); continue; }
         limparBuffer();
 
@@ -548,6 +564,7 @@ void inserirLugar() {
 }
 
 int login() {
+    
     limparTela();
     iconelogin();
 
@@ -557,61 +574,48 @@ int login() {
     printf(GREEN"\t\t\t\t\t\t === LOGIN ===\n\n"RESET);
 
     printf("\t\t\t\t\tUsuario: ");
-    if (scanf("%49s", usuario) != 1) { limparBuffer(); return 0; }
+    if (scanf("%49s", usuario) != 1) {
+        limparBuffer();
+        return 0;
+    }
 
     printf("\t\t\t\t\tSenha: ");
-    if (scanf("%49s", senha) != 1) { limparBuffer(); return 0; }
+    if (scanf("%49s", senha) != 1) {
+        limparBuffer();
+        return 0;
+    }
 
+    limparBuffer();
+
+    //login admin
+    if (strcmp(usuario, "admin") == 0) {
+        if (strcmp(senha, "admin123") == 0) {
+            return 2; // ADMIN
+        } else {
+            printf(RED"\nSenha do administrador incorreta!\n"RESET);
+            pressioneEnter();
+            return 0;
+        }
+    }
+
+    // login usuario txt
     if (!arq) {
         printf(RED"\nArquivo de usuarios nao encontrado!\n"RESET);
-        printf("Pressione ENTER para continuar...");
-        limparBuffer();
-        getchar();
+        pressioneEnter();
         return 0;
     }
 
     while (fscanf(arq, "%49s %49s", fileUser, filePass) != EOF) {
         if (strcmp(usuario, fileUser) == 0 && strcmp(senha, filePass) == 0) {
             fclose(arq);
-
-            if (strcmp(usuario, "admin") == 0)
-                return 2;  // ADMIN
-
-            return 1;      // USUARIO
+            return 1; // USUARIO NORMAL
         }
     }
 
     fclose(arq);
 
     printf(RED"\nLogin invalido!\n"RESET);
-    printf("Pressione ENTER para continuar...");
-    limparBuffer();
-    getchar();
-
-    return 0;
-}
-
-int loginAdmin() {
-    limparTela();
-    iconeadministrador();
-
-    char senha[50];
-
-    printf(GREEN"\t\t\t\t\t=== LOGIN DO ADMINISTRADOR ===\n\n"RESET);
-
-    printf("\t\t\t\t\tDigite a senha do administrador: ");
-    if (scanf("%49s", senha) != 1) { limparBuffer(); return 0; }
-
-    // DEFINA A SENHA DO ADMIN AQUI:
-    if (strcmp(senha, "admin123") == 0) {
-        return 2;  // acesso ao menuAdmin()
-    }
-
-    printf(RED"\nSenha incorreta!\n"RESET);
-    printf("Pressione ENTER para continuar...");
-    limparBuffer();
-    getchar();
-
+    pressioneEnter();
     return 0;
 }
 
@@ -626,7 +630,7 @@ void listarLugares() {
     int i;
     for (i = 0; i < numLugares; i++) {
         Local *l = &listaLugares[i];
-        printf("%d) %s\n", i+1, l->nome);
+        printf("\t\t\t\t\t%d) %s\n", i+1, l->nome);
         printf("\t\t\t\t\tDescricao: %.80s%s\n", l->descricao, (strlen(l->descricao) > 80 ? "..." : ""));
         printf("\t\t\t\t\tEndereco: %s CEP: %s\n", l->endereco.rua, l->endereco.cep);
         printf("\t\t\t\t\tContato: ");
@@ -637,7 +641,7 @@ void listarLugares() {
         }
         if (l->contato.qtdeTelefone == 0) printf("nenhum");
         printf("\n");
-        printf("\t\t\t\tCategorias: ");
+        printf("\t\t\t\t\tCategorias: ");
         int c;
         for (c = 0; c < l->qtdTipos; c++) {
             if (c) printf(", ");
@@ -677,7 +681,7 @@ void salvarTxt(const char *nome_arquivo) {
 void carregarTxt(const char *nome_arquivo) {
     FILE *f = fopen(nome_arquivo, "rb");
     if (!f) {
-        // arquivo pode nÃ£o existir ainda; nÃ£o tratar como erro critico
+        // arquivo pode nao existir ainda; nao tratar como erro critico
         return;
     }
     int q = 0;
@@ -734,14 +738,14 @@ void menuAdmin() {
         limparTela();
         cabecalho();
 
-        printf(GREEN"=== MENU DO ADMINISTRADOR ===\n\n"RESET);
-        printf("1 - Cadastrar local\n");
-        printf("2 - Editar local (nao implementado)\n");
-        printf("3 - Excluir local (nao implementado)\n");
-        printf("4 - Salvar dados\n");
-        printf("5 - Carregar dados\n");
-        printf("6 - Sair\n\n");
-        printf("Escolha: ");
+        printf(GREEN"\t\t\t\t\t\t=== MENU DO ADMINISTRADOR ===\n\n"RESET);
+        printf("\t\t\t\t\t\t1 - Cadastrar local\n");
+        printf("\t\t\t\t\t\t2 - Editar local (nao implementado)\n");
+        printf("\t\t\t\t\t\t3 - Excluir local (nao implementado)\n");
+        printf("\t\t\t\t\t\t4 - Salvar dados\n");
+        printf("\t\t\t\t\t\t5 - Carregar dados\n");
+        printf("\t\t\t\t\t\t6 - Sair\n\n");
+        printf("\t\t\t\t\t\tEscolha: ");
         if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
         limparBuffer();
 
@@ -769,8 +773,7 @@ int menuInicial() {
 
         printf("\t\t\t\t\t\t1 - Login\n");
         printf("\t\t\t\t\t\t2 - Cadastrar usuario\n");
-        printf("\t\t\t\t\t\t3 - Login como Administrador\n");
-        printf("\t\t\t\t\t\t4 - Sair\n");
+        printf("\t\t\t\t\t\t3 - Sair\n");	     
 
         printf("\t\t\t\t\t\tEscolha: ");
         if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
@@ -781,10 +784,8 @@ int menuInicial() {
                 return login();
             case 2:
                 cadastrarUsuario();
-                break;
+                break;      
             case 3:
-                return loginAdmin();
-            case 4:
                 exit(0);
             default:
                 printf(RED"\nOpcao invalida!\n"RESET);
@@ -813,4 +814,3 @@ int main() {
 
     return 0;
 }
-

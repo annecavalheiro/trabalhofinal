@@ -159,8 +159,8 @@ void menuAdmin() {
 
         printf(GREEN"=== MENU DO ADMINISTRADOR ===\n\n"RESET);
         printf("1 - Cadastrar local\n");
-        printf("2 - Editar local (nao implementado)\n");
-        printf("3 - Excluir local (nao implementado)\n");
+        printf("2 - Editar local\n");
+        printf("3 - Excluir local\n");
         printf("4 - Salvar dados\n");
         printf("5 - Carregar dados\n");
         printf("6 - Sair\n\n");

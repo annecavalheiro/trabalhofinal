@@ -7,7 +7,7 @@
 #include "interface.h"
 #include "utils.h"
 
-/* Definição das variáveis globais */
+
 Local listaLugares[MAX_LOCAIS];
 int numLugares = 0;
 
@@ -124,6 +124,215 @@ void inserirLugar() {
     listaLugares[numLugares++] = novoLugar;
     printf("\n");
     printf(GREEN"\nLugar cadastrado com sucesso!\n"RESET);
+}
+
+void editarLocal() {
+    if (numLugares == 0) {
+        printf(RED"\nNenhum lugar cadastrado.\n"RESET);
+        return;
+    }
+
+    limparTela();
+    printf("\n\t\t\t=== EDITAR LOCAL ===\n");
+
+    // Mostrar todos os lugares com índice
+    for (int i = 0; i < numLugares; i++) {
+        printf("\t%d - %s\n", i + 1, listaLugares[i].nome);
+    }
+
+    printf("\n\tEscolha o número do local que deseja editar: ");
+    int escolha;
+    if (scanf("%d", &escolha) != 1) {
+        limparBuffer();
+        return;
+    }
+    limparBuffer();
+
+    if (escolha < 1 || escolha > numLugares) {
+        printf(RED"\nOpcao invalida!\n"RESET);
+        pressioneEnter();
+        return;
+    }
+
+    Local *L = &listaLugares[escolha - 1];
+
+    int opcao;
+
+    while (1) {
+        limparTela();
+        printf("\n\t\t=== Editando: %s ===\n", L->nome);
+
+        printf("\n\t1 - Editar Nome");
+        printf("\n\t2 - Editar Descricao");
+        printf("\n\t3 - Editar Endereco");
+        printf("\n\t4 - Editar Contato");
+        printf("\n\t5 - Editar Categorias");
+        printf("\n\t6 - Editar Valor da Entrada");
+        printf("\n\t0 - Voltar");
+
+        printf("\n\n\tEscolha: ");
+        if (scanf("%d", &opcao) != 1) {
+            limparBuffer();
+            continue;
+        }
+        limparBuffer();
+
+        if (opcao == 0) break;
+
+        switch (opcao) {
+
+            case 1: {
+                printf("\nNovo nome: ");
+                fgets(L->nome, MAX_NOME, stdin);
+                trim_nl(L->nome);
+                break;
+            }
+
+            case 2: {
+                printf("\nNova descricao: ");
+                fgets(L->descricao, sizeof(L->descricao), stdin);
+                trim_nl(L->descricao);
+                break;
+            }
+
+            case 3: {
+                printf("\nNova rua: ");
+                fgets(L->endereco.rua, sizeof(L->endereco.rua), stdin);
+                trim_nl(L->endereco.rua);
+
+                printf("\nNovo CEP: ");
+                fgets(L->endereco.cep, sizeof(L->endereco.cep), stdin);
+                trim_nl(L->endereco.cep);
+                break;
+            }
+
+            case 4: {
+                printf("\nQuantos telefones (max 3): ");
+                scanf("%d", &L->contato.qtdeTelefone);
+                limparBuffer();
+
+                if (L->contato.qtdeTelefone > MAX_TELEFONES)
+                    L->contato.qtdeTelefone = MAX_TELEFONES;
+
+                for (int i = 0; i < L->contato.qtdeTelefone; i++) {
+                    printf("Telefone %d: ", i + 1);
+                    fgets(L->contato.telefones[i], 30, stdin);
+                    trim_nl(L->contato.telefones[i]);
+                }
+
+                printf("E-mail: ");
+                fgets(L->contato.email, 50, stdin);
+                trim_nl(L->contato.email);
+
+                printf("Site: ");
+                fgets(L->contato.site, 50, stdin);
+                trim_nl(L->contato.site);
+
+                break;
+            }
+
+            case 5: {
+                L->qtdTipos = 0;
+                int c;
+
+                printf("\n--- NOVAS CATEGORIAS ---\n");
+                printf("Digite 0 para terminar.\n");
+
+                while (1) {
+                    printf("Categoria (1-14): ");
+                    if (scanf("%d", &c) != 1) {
+                        limparBuffer();
+                        continue;
+                    }
+                    limparBuffer();
+
+                    if (c == 0) break;
+
+                    if (c < 1 || c > 14) {
+                        printf(RED"Categoria invalida!\n"RESET);
+                        continue;
+                    }
+
+                    L->tipos[L->qtdTipos++] = obterEnumTipoDeLugar(c);
+
+                    if (L->qtdTipos >= MAX_TIPOS) break;
+                }
+                break;
+            }
+
+            case 6: {
+                while (1) {
+                    printf("\nNovo valor de entrada (R$): ");
+                    if (scanf("%f", &L->entrada) != 1) {
+                        limparBuffer();
+                        printf(RED"Valor inválido!\n"RESET);
+                        continue;
+                    }
+                    limparBuffer();
+
+                    if (L->entrada < 0) {
+                        printf(RED"O valor nao pode ser negativo!\n"RESET);
+                        continue;
+                    }
+                    break;
+                }
+                break;
+            }
+
+            default:
+                printf(RED"\nOpcao invalida!\n"RESET);
+        }
+
+        printf(GREEN"\nAlteração salva!\n"RESET);
+        pressioneEnter();
+    }
+}
+
+void excluirLocal() {
+    if (numLugares == 0) {
+        printf(RED"\nNenhum lugar cadastrado.\n"RESET);
+        return;
+    }
+
+    limparTela();
+    printf("\n\t\t\t=== EXCLUIR LOCAL ===\n");
+
+    for (int i = 0; i < numLugares; i++) {
+        printf("\t%d - %s\n", i + 1, listaLugares[i].nome);
+    }
+
+    printf("\n\tEscolha o número do local que deseja excluir: ");
+    int escolha;
+    if (scanf("%d", &escolha) != 1) {
+        return;
+    }
+    limparBuffer();
+
+    if (escolha < 1 || escolha > numLugares) {
+        printf(RED"\nOpção inválida!\n"RESET);
+        return;
+    }
+
+    int idx = escolha - 1;
+
+    printf(RED"\nTem certeza que deseja excluir '%s'? (s/n): "RESET, listaLugares[idx].nome);
+    char c = getchar();
+    limparBuffer();
+
+    if (tolower(c) != 's') {
+        printf("\nOperação cancelada.\n");
+        return;
+    }
+
+    // Remover deslocando o vetor
+    for (int i = idx; i < numLugares - 1; i++) {
+        listaLugares[i] = listaLugares[i + 1];
+    }
+
+    numLugares--;
+
+    printf(GREEN"\nLocal excluido com sucesso!\n"RESET);
+    pressioneEnter();
 }
 
 int loginAdmin() {
@@ -316,7 +525,7 @@ void salvarTxt(const char *nome_arquivo) {
 void carregarTxt(const char *nome_arquivo) {
     FILE *f = fopen(nome_arquivo, "rb");
     if (!f) {
-        // arquivo pode nÃ£o existir ainda; nÃ£o tratar como erro critico
+        // arquivo pode nao existir ainda; nao tratar como erro critico
         return;
     }
     int q = 0;

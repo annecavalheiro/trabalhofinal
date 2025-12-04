@@ -1,0 +1,21 @@
+1
+LUGAR
+Nome: AAAAA
+Descricao: AAAAA
+Rua: A
+CEP: 23213
+Telefones: 1
+Telefone: 22
+Email: AAA
+Site: AAAA
+Categorias: 3
+Categoria: 1
+Categoria: 2
+Categoria: 5
+Entrada: 0.00
+Ranking: 2.00
+Comentarios: 1
+Autor: Meu primeiro comente
+Nota: 2.0
+Texto: ahahaha
+FIM

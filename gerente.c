@@ -381,8 +381,8 @@ void menuAdmin() {
 
         switch (opcao) {
             case 1: inserirLugar(); pressioneEnter(); break;
-            case 2: printf("Editar local - funcao pendente.\n"); pressioneEnter(); break;
-            case 3: printf("Excluir local - funcao pendente.\n"); pressioneEnter(); break;
+            case 2: editarLocal(); break;
+            case 3: excluirLocal(); break;
             case 4: salvarTxt("lugares.dat"); pressioneEnter(); break;
             case 5: carregarTxt("lugares.dat"); printf("Dados carregados.\n"); pressioneEnter(); break;
             case 6: return;

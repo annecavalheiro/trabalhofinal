@@ -159,18 +159,85 @@ void adicionarComentario() {
         return;
     }
 
-    listarLugares();
-    printf("\nDigite o numero do lugar que deseja comentar: ");
-    int opcao;
+    int paginaAtual = 0;
+    int itensPorPagina = 6;
+    int totalPaginas = (numLugares + itensPorPagina - 1) / itensPorPagina;
+    int opcao = -1;
+    char comando[10];
 
-    if (scanf("%d", &opcao) != 1 || opcao < 1 || opcao > numLugares) {
+    while (1) {
+        limparTela();
+        iconecomentarios();
+        
+        printf(GREEN"\n\t\t\t=== ESCOLHA UM LUGAR PARA COMENTAR ===\n"RESET);
+        printf(GREEN"\t\t\t   (Pagina %d de %d)\n\n"RESET, paginaAtual + 1, totalPaginas);
+
+        // Exibir locais da página atual
+        int inicio = paginaAtual * itensPorPagina;
+        int fim = inicio + itensPorPagina;
+        if (fim > numLugares) fim = numLugares;
+
+        printf("\t\t\t+----+--------------------------------------+\n");
+        printf("\t\t\t| N  | NOME DO LOCAL                        |\n");
+        printf("\t\t\t+----+--------------------------------------+\n");
+
+        for (int i = inicio; i < fim; i++) {
+            printf("\t\t\t| %-2d | %-36.36s |\n", i + 1, listaLugares[i].nome);
+        }
+
+        printf("\t\t\t+----+--------------------------------------+\n\n");
+
+        // Opções de navegação
+        printf("\t\t\t[N] Proxima pagina  ");
+        printf("[A] Pagina anterior  ");
+        printf("[S] Sair\n");
+        printf("\t\t\tOu digite o numero do local: ");
+
+        if (scanf("%9s", comando) != 1) {
+            limparBuffer();
+            continue;
+        }
         limparBuffer();
-        printf(RED"Opcao invalida!\n"RESET);
-        pressioneEnter();
-        return;
-    }
-    limparBuffer();
 
+        // Verificar se é comando de navegação
+        if (tolower(comando[0]) == 'n' && strlen(comando) == 1) {
+            if (paginaAtual < totalPaginas - 1) {
+                paginaAtual++;
+            } else {
+                printf(RED"\n\t\t\tJa esta na ultima pagina!\n"RESET);
+                pressioneEnter();
+            }
+            continue;
+        }
+
+        if (tolower(comando[0]) == 'a' && strlen(comando) == 1) {
+            if (paginaAtual > 0) {
+                paginaAtual--;
+            } else {
+                printf(RED"\n\t\t\tJa esta na primeira pagina!\n"RESET);
+                pressioneEnter();
+            }
+            continue;
+        }
+
+        if (tolower(comando[0]) == 's' && strlen(comando) == 1) {
+            return;
+        }
+
+        // Tentar converter para número
+        opcao = atoi(comando);
+
+        if (opcao < 1 || opcao > numLugares) {
+            printf(RED"\n\t\t\tOpcao invalida!\n"RESET);
+            pressioneEnter();
+            continue;
+        }
+
+        // Número válido escolhido, sair do loop
+        break;
+    }
+
+    // processar comentário
     Local *l = &listaLugares[opcao - 1];
 
     if (l->numComentarios >= MAX_COMENTARIO) {
@@ -178,6 +245,10 @@ void adicionarComentario() {
         pressioneEnter();
         return;
     }
+
+    limparTela();
+    iconecomentarios();
+    printf(GREEN"\n\t\t\t=== COMENTAR: %s ===\n\n"RESET, l->nome);
 
     Comentario *c = &l->comentarios[l->numComentarios];
 
@@ -193,13 +264,14 @@ void adicionarComentario() {
     if (scanf("%f", &c->nota) != 1 || c->nota < 0 || c->nota > 5) {
         limparBuffer();
         printf(RED"Nota invalida!\n"RESET);
+        pressioneEnter();
         return;
     }
     limparBuffer();
 
     l->numComentarios++;
 
-    // recalcular ranking maeio
+    // recalcular ranking médio
     float soma = 0;
     for (int i = 0; i < l->numComentarios; i++) {
         soma += l->comentarios[i].nota;

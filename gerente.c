@@ -12,7 +12,7 @@ Local listaLugares[MAX_LOCAIS];
 int numLugares = 0;
 
 void inserirLugar() {
-    int retorno = 1;
+    //int retorno = 1;
     if (numLugares >= MAX_LOCAIS) {
         printf("\nLista cheia!\n");
         return;

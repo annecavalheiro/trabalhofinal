@@ -8,7 +8,7 @@
 
 /*
     Compilar:
-    gcc GUIA_TURISTICO.c gerente.c turista.c utils.c interface.c -o guia
+    gcc GUIA_TURISTICO.c gerente.c turista.c utils.c interface.c -o guia -Wall -Wextra -std=c99
 */
 
 int main() {

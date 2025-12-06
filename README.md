@@ -156,10 +156,11 @@ projeto/
 - **Anne Cavalheiro** - [GitHub](https://github.com/annecavalheiro) - Responsabilidade principal
 - **Anne Oliveira** - [GitHub](https://github.com/annehdob) - Estruturas de dados
 - **Anderson da Silva** - [GitHub](https://github.com/andersonsas) - Interface e I/O
-- **Samily Moldes** - [GitHub]() - Testes e documentação
+- **Samily Moldes** - [GitHub](https://github.com/samilymoldes) - Testes e documentação
 
 
 
 
 Desenvolvido com ❤️ pela equipe [Monstros SA] | Projeto acadêmico - [IFAM - TADS]
+
 

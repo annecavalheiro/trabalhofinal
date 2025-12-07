@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <conio.h>
 #include "turista.h"
 #include "interface.h"
 #include "gerente.h"
@@ -168,11 +169,11 @@ void adicionarComentario() {
     while (1) {
         limparTela();
         iconecomentarios();
-        
-        printf(GREEN"\n\t\t\t=== ESCOLHA UM LUGAR PARA COMENTAR ===\n"RESET);
-        printf(GREEN"\t\t\t   (Pagina %d de %d)\n\n"RESET, paginaAtual + 1, totalPaginas);
 
-        // Exibir locais da p√°gina atual
+        printf(GREEN"\n\t\t\t=== ESCOLHA UM LUGAR PARA COMENTAR ===\n"RESET);
+        printf(GREEN"\t\t\t   (P·gina %d de %d)\n\n"RESET, paginaAtual + 1, totalPaginas);
+
+        // Exibir locais da p·gina atual
         int inicio = paginaAtual * itensPorPagina;
         int fim = inicio + itensPorPagina;
         if (fim > numLugares) fim = numLugares;
@@ -187,11 +188,11 @@ void adicionarComentario() {
 
         printf("\t\t\t+----+--------------------------------------+\n\n");
 
-        // Op√ß√µes de navega√ß√£o
-        printf("\t\t\t[N] Proxima pagina  ");
-        printf("[A] Pagina anterior  ");
+        // OpÁıes de NavegaÁ„o
+        printf("\t\t\t[N] PrÛxima p·gina  ");
+        printf("[A] P·gina anterior  ");
         printf("[S] Sair\n");
-        printf("\t\t\tOu digite o numero do local: ");
+        printf("\t\t\tOu Digite o n˙mero do local: ");        
 
         if (scanf("%9s", comando) != 1) {
             limparBuffer();
@@ -199,7 +200,7 @@ void adicionarComentario() {
         }
         limparBuffer();
 
-        // Verificar se √© comando de navega√ß√£o
+        // Verificar se È comando de navegaÁ„o
         if (tolower(comando[0]) == 'n' && strlen(comando) == 1) {
             if (paginaAtual < totalPaginas - 1) {
                 paginaAtual++;
@@ -224,7 +225,7 @@ void adicionarComentario() {
             return;
         }
 
-        // Tentar converter para n√∫mero
+        // Tentar converter para nùmero
         opcao = atoi(comando);
 
         if (opcao < 1 || opcao > numLugares) {
@@ -233,11 +234,11 @@ void adicionarComentario() {
             continue;
         }
 
-        // N√∫mero v√°lido escolhido, sair do loop
+        // Nùmero vùlido escolhido, sair do loop
         break;
     }
 
-    // processar coment√°rio
+    // processar comentùrio
     Local *l = &listaLugares[opcao - 1];
 
     if (l->numComentarios >= MAX_COMENTARIO) {
@@ -252,9 +253,15 @@ void adicionarComentario() {
 
     Comentario *c = &l->comentarios[l->numComentarios];
 
-    printf("\nAutor do comentario: ");
-    fgets(c->autor, sizeof(c->autor), stdin);
-    trim_nl(c->autor);
+    if (currentUser[0] != '\0') {
+        strncpy(c->autor, currentUser, sizeof(c->autor)-1);
+        c->autor[sizeof(c->autor)-1] = '\0';
+        printf("\nAutor do comentario: %s\n", c->autor);
+    } else {
+        printf("\nAutor do comentario: ");
+        fgets(c->autor, sizeof(c->autor), stdin);
+        trim_nl(c->autor);
+    }
 
     printf("Digite seu comentario: ");
     fgets(c->texto, sizeof(c->texto), stdin);
@@ -271,7 +278,7 @@ void adicionarComentario() {
 
     l->numComentarios++;
 
-    // recalcular ranking m√©dio
+    // recalcular ranking mùdio
     float soma = 0;
     for (int i = 0; i < l->numComentarios; i++) {
         soma += l->comentarios[i].nota;
@@ -289,7 +296,7 @@ void listarComentarios() {
 
     if (scanf("%d", &escolha) != 1 || escolha < 1 || escolha > numLugares) {
         limparBuffer();
-        printf(RED"Opcao invalida!\n"RESET);
+        printf(RED"OpÁ„o inv·lida!\n"RESET);
         return;
     }
     limparBuffer();

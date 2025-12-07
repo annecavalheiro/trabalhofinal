@@ -68,5 +68,6 @@ void carregarTxt(const char *nome_arquivo);
 
 extern Local listaLugares[MAX_LOCAIS];
 extern int numLugares;
+extern char currentUser[50];
 
 #endif

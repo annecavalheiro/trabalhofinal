@@ -6,29 +6,20 @@
 #include "gerente.h"
 #include "turista.h"
 #include "utils.h"
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 
 /*
-    Compilar:
-    gcc GUIA_TURISTICO.c gerente.c turista.c utils.c interface.c -o guia -Wall -Wextra -std=c99
+Compilar:
+gcc GUIA_TURISTICO.c gerente.c turista.c utils.c interface.c -o guia -Wall -Wextra -std=c99
 */
 
 int main() {
-    #ifdef _WIN32
-        /* Ajusta code page do console para Windows-1252 e locale */
-        system("chcp 1252 > nul");  /* altera code page do terminal */
-        SetConsoleOutputCP(1252);
-        SetConsoleCP(1252);
-        setlocale(LC_ALL, "Portuguese_Brazil.1252");
+    #ifdef _WIN32        
+        system("chcp 65001 > nul");  /* altera code page do terminal */        
     #else
         setlocale(LC_ALL, "pt_BR.UTF-8");
     #endif
     
-    // tenta carregar dados no inicio (se existir)
-    carregarTxt("lugares.dat");
+    carregarTxt("lugares.dat"); // tenta carregar dados no inicio (se existir)
 
     while (1) {
         int tipo = menuInicial();

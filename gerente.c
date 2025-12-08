@@ -142,7 +142,7 @@ void editarLocal() {
         printf("\t%d - %s\n", i + 1, listaLugares[i].nome);
     }
 
-    printf("\n\tEscolha o número do local que deseja editar: ");
+    printf("\n\tEscolha o nï¿½mero do local que deseja editar: ");
     int escolha;
     if (scanf("%d", &escolha) != 1) {
         limparBuffer();
@@ -151,7 +151,7 @@ void editarLocal() {
     limparBuffer();
 
     if (escolha < 1 || escolha > numLugares) {
-        printf(RED"\nOpção inválida!\n"RESET);
+        printf(RED"\nOpÃ§Ã£o invÃ¡lida!\n"RESET);
         pressioneEnter();
         return;
     }
@@ -267,7 +267,7 @@ void editarLocal() {
                     printf("\nNovo valor de entrada (R$): ");
                     if (scanf("%f", &L->entrada) != 1) {
                         limparBuffer();
-                        printf(RED"Valor invï¿½lido!\n"RESET);
+                        printf(RED"Valor invÃ¡lido!\n"RESET);
                         continue;
                     }
                     limparBuffer();
@@ -285,7 +285,7 @@ void editarLocal() {
                 printf(RED"\nOpcao invalida!\n"RESET);
         }
 
-        printf(GREEN"\nAlteração salva!\n"RESET);
+        printf(GREEN"\nAlteraÃ§Ã£o salva!\n"RESET);
         pressioneEnter();
     }
 }
@@ -303,7 +303,7 @@ void excluirLocal() {
         printf("\t%d - %s\n", i + 1, listaLugares[i].nome);
     }
 
-    printf("\n\tEscolha o número do local que deseja excluir: ");
+    printf("\n\tEscolha o nï¿½mero do local que deseja excluir: ");
     int escolha;
     if (scanf("%d", &escolha) != 1) {
         return;
@@ -311,7 +311,7 @@ void excluirLocal() {
     limparBuffer();
 
     if (escolha < 1 || escolha > numLugares) {
-        printf(RED"\nOpção inválida!\n"RESET);
+        printf(RED"\nOpÃ§Ã£o invÃ¡lida!\n"RESET);
         return;
     }
 
@@ -322,7 +322,7 @@ void excluirLocal() {
     limparBuffer();
 
     if (tolower(c) != 's') {
-        printf("\nOperação cancelada.\n");
+        printf("\nOperaÃ§Ã£o cancelada.\n");
         return;
     }
 
@@ -350,6 +350,7 @@ int loginAdmin() {
 
     // DEFINA A SENHA DO ADMIN AQUI:
     if (strcmp(senha, "admin123") == 0) {
+        strcpy(currentUser, "Administrador");
         return 2;  // acesso ao menuAdmin()
     }
 
@@ -403,7 +404,7 @@ int login() {
 
     printf(GREEN"\t\t\t\t\t\t === LOGIN ===\n\n"RESET);
 
-    printf("\t\t\t\t\tUsuário: ");
+    printf("\t\t\t\t\tUsuÃ¡rio: ");
     if (scanf("%49s", usuario) != 1) { limparBuffer(); return 0; }
 
     printf("\t\t\t\t\tSenha: ");
@@ -479,7 +480,7 @@ int menuInicial() {
         cabecalho();
 
         printf("\t\t\t\t\t\t1 - Login\n");
-        printf("\t\t\t\t\t\t2 - Cadastrar usuário\n");
+        printf("\t\t\t\t\t\t2 - Cadastrar UsuÃ¡rio\n");
         printf("\t\t\t\t\t\t3 - Login como Administrador\n");
         printf("\t\t\t\t\t\t4 - Sair\n");
 
@@ -498,7 +499,7 @@ int menuInicial() {
             case 4:
                 exit(0);
             default:
-                printf(RED"\nOpcao invalida!\n"RESET);
+                printf(RED"\nOpÃ§Ã£o InvÃ¡lida!\n"RESET);
                 pressioneEnter();
                 printf("Pressione ENTER para continuar...");
                 limparBuffer();

@@ -116,7 +116,6 @@ void iconelistar() {
     printf("\t\t\t\t\t         "GREEN"#  "RED"## ______________   "GREEN"#\n");
     printf("\t\t\t\t\t         "GREEN"#                      #            \n");
     printf("\t\t\t\t\t         "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
     printf("\t\t\t\t\t         "GREEN"########################            \n");
     printf("\n");
 }

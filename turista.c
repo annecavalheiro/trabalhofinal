@@ -41,38 +41,105 @@ void menuUsuario() {
 void listarLugares() {
     limparTela();
     iconelistar();
-    printf(GREEN"\t\t\t\t\t\t=== LISTA DE LUGARES (%d) ===\n\n"RESET, numLugares);
+
     if (numLugares == 0) {
         printf("Nenhum lugar cadastrado.\n");
         return;
     }
-    int i;
-    for (i = 0; i < numLugares; i++) {
+
+    int porPagina = 1;  // Apenas 1 local por página
+    int pagina = 0;
+    int totalPaginas = (numLugares + porPagina - 1) / porPagina;
+
+    while (1) {
+        limparTela();
+        iconelistar();
+
+        printf(GREEN "\t\t\t\t\t=== LISTA DE LUGARES (%d) - Pagina %d/%d ===\n\n" RESET,
+               numLugares, pagina + 1, totalPaginas);
+
+        int i = pagina;
         Local *l = &listaLugares[i];
-        printf("%d) %s\n", i + 1, l->nome);
-        printf("\t\t\t\t\tDescricao: %.80s%s\n", l->descricao, (strlen(l->descricao) > 80 ? "..." : ""));
-        printf("\t\t\t\t\tEndereco: %s CEP: %s\n", l->endereco.rua, l->endereco.cep);
-        printf("\t\t\t\t\tContato: ");
-        int t;
-        for (t = 0; t < l->contato.qtdeTelefone; t++) {
-            if (t) printf(", ");
-            printf("%s", l->contato.telefones[t]);
+
+        printf("\t\t\t%d) %s\n", i + 1, l->nome);
+
+        printf("\t\t\tDescricao:\n");
+
+        int tam = strlen(l->descricao);
+        int maxChars = 80;
+        int maxLinhas = 6;
+
+        for (int linha = 0; linha < maxLinhas; linha++) {
+            int ini = linha * maxChars;
+
+            if (ini >= tam)
+                break;
+
+            char buffer[85];
+            strncpy(buffer, l->descricao + ini, maxChars);
+            buffer[maxChars] = '\0';
+
+            printf("\t\t\t   %s\n", buffer);
         }
+
+        if (tam > maxLinhas * maxChars)
+            printf("\t\t\t   ...\n");
+
+    
+        //        DADOS DO LOCAL
+        printf("\t\t\tEndereco: %s | CEP: %s\n",
+               l->endereco.rua, l->endereco.cep);
+
+        printf("\t\t\tContato: ");
         if (l->contato.qtdeTelefone == 0) printf("nenhum");
-        printf("\n");
-        printf("\t\t\t\tCategorias: ");
-        int c;
-        for (c = 0; c < l->qtdTipos; c++) {
-            if (c) printf(", ");
-            printf("%s", obterNomeTipoDeLugar(l->tipos[c]));
+        else {
+            for (int t = 0; t < l->contato.qtdeTelefone; t++) {
+                if (t) printf(", ");
+                printf("%s", l->contato.telefones[t]);
+            }
         }
+
+        printf("\n\t\t\tCategorias: ");
         if (l->qtdTipos == 0) printf("nenhuma");
+        else {
+            for (int c = 0; c < l->qtdTipos; c++) {
+                if (c) printf(", ");
+                printf("%s", obterNomeTipoDeLugar(l->tipos[c]));
+            }
+        }
+
         printf("\n\n");
+
+        //       MENU DE NAVEGAÇÃO
+        printf("" RED "Opcoes:" RESET "\n");
+        if (pagina > 0) printf("" RED "V" RESET " - Voltar pagina");
+        if (pagina < totalPaginas - 1) printf("\t\t" RED "P" RESET " - Proxima pagina");
+        printf("\t\t\t\t" RED "S" RESET " - Sair\n");
+        printf("Escolha: ");
+
+        char opcao;
+        scanf(" %c", &opcao);
+        opcao = toupper(opcao);
+
+        if (opcao == 'P' && pagina < totalPaginas - 1) {
+            pagina++;
+        }
+        else if (opcao == 'V' && pagina > 0) {
+            pagina--;
+        }
+        else if (opcao == 'S') {
+            return;
+        }
+        else {
+            printf(RED "Opcao invalida!\n" RESET);
+            pressioneEnter();
+        }
     }
 }
 
 void filtrarPorCategoria() {
     iconefiltrar();
+
     if (numLugares == 0) {
         printf("\nNenhum lugar cadastrado.\n");
         pressioneEnter();
@@ -81,13 +148,13 @@ void filtrarPorCategoria() {
 
     int opcao;
 
-    printf("\n\t\t\t\t=== FILTRAR POR CATEGORIA ===\n");
-    printf("\t1 - Patrimonio Historico     6 - Culinaria Regional      11 - Museu\n");
-    printf("\t2 - Cultural                 7 - Indigena                12 - Cinema\n");
-    printf("\t3 - Igreja                   8 - Bar                     13 - Saude Publica\n");
-    printf("\t4 - Gastronomia              9 - Restaurante             14 - Outro\n");
-    printf("\t5 - Culinaria Brasileira     10 - Mercado\n");
-    printf("\tEscolha uma categoria: ");
+    printf("\n\t\t\t\t\t\t=== FILTRAR POR CATEGORIA ===\n");
+    printf("\t\t\t1 - Patrimonio Historico     6 - Culinaria Regional      11 - Museu\n");
+    printf("\t\t\t2 - Cultural                 7 - Indigena                12 - Cinema\n");
+    printf("\t\t\t3 - Igreja                   8 - Bar                     13 - Saude Publica\n");
+    printf("\t\t\t4 - Gastronomia              9 - Restaurante             14 - Outro\n");
+    printf("\t\t\t5 - Culinaria Brasileira     10 - Mercado\n");
+    printf("\n\t\t\tEscolha uma categoria: ");
 
     if (scanf("%d", &opcao) != 1 || opcao < 1 || opcao > 14) {
         limparBuffer();
@@ -98,32 +165,109 @@ void filtrarPorCategoria() {
     limparBuffer();
 
     TipoDeLugar categoriaEscolhida = obterEnumTipoDeLugar(opcao);
-    int encontrados = 0;
 
-    limparTela();
-    printf("\n\t\t\t\t=== RESULTADOS DA BUSCA ===\n");
-    int i;
-    for (i = 0; i < numLugares; i++) {
-        // Verifica apenas categorias EXATAS (aqui escolhi tratar quando qtdTipos == 1 e igual)
-        if (listaLugares[i].qtdTipos == 1 && listaLugares[i].tipos[0] == categoriaEscolhida) {
-            printf("\n\t\t\t\t--- %s ---\n", listaLugares[i].nome);
-            printf("\t\t\t\tDescricao: %s\n", listaLugares[i].descricao);
-            printf("\t\t\t\tEndereco: %s, CEP %s\n",
-                listaLugares[i].endereco.rua,
-                listaLugares[i].endereco.cep);
-            printf("\t\t\t\tEntrada: R$ %.2f\n", listaLugares[i].entrada);
-            printf("\t\t\t\tRanking: %.1f\n", listaLugares[i].ranking);
+    //    CRIA UMA LISTA TEMPORÁRIA COM RESULTADOS
+    Local *resultado[100];
+    int qtd = 0;
 
-            encontrados++;
+    for (int i = 0; i < numLugares; i++) {
+        int temCategoria = 0;
+
+        for (int t = 0; t < listaLugares[i].qtdTipos; t++) {
+            if (listaLugares[i].tipos[t] == categoriaEscolhida) {
+                temCategoria = 1;
+                break;
+            }
+        }
+
+        if (temCategoria) {
+            resultado[qtd++] = &listaLugares[i];
         }
     }
 
-    if (encontrados == 0) {
-        printf("\nNenhum lugar encontrado para essa categoria exata.\n");
+    if (qtd == 0) {
+        printf("\nNenhum lugar encontrado para essa categoria.\n");
+        pressioneEnter();
+        return;
     }
 
-    printf("\n");
-    pressioneEnter();
+    //       PAGINAÇÃO (2 LOCAIS POR PÁGINA)
+    int porPagina = 2;
+    int pagina = 0;
+    int totalPaginas = (qtd + porPagina - 1) / porPagina;
+
+    int maxChars = 80;
+    int maxLinhas = 6;
+
+    while (1) {
+
+        limparTela();
+        printf(GREEN "\n\t\t\t=== RESULTADOS (%d) - Página %d/%d ===\n\n" RESET,
+               qtd, pagina + 1, totalPaginas);
+
+        int inicio = pagina * porPagina;
+        int fim = inicio + porPagina;
+
+        if (fim > qtd)
+            fim = qtd;
+
+        // MOSTRA SOMENTE OS 2 LOCAIS DA PÁGINA
+        for (int i = inicio; i < fim; i++) {
+            Local *l = resultado[i];
+
+            printf("\t\t\t--- %s ---\n", l->nome);
+            printf("\t\t\tDescricao:\n");
+
+            int tam = strlen(l->descricao);
+
+            for (int linha = 0; linha < maxLinhas; linha++) {
+                int ini = linha * maxChars;
+                if (ini >= tam)
+                    break;
+
+                char buffer[85];
+                strncpy(buffer, l->descricao + ini, maxChars);
+                buffer[maxChars] = '\0';
+
+                printf("\t\t\t   %s\n", buffer);
+            }
+
+            if (tam > maxLinhas * maxChars)
+                printf("\t\t\t   ...\n");
+
+            printf("\t\t\tEndereco: %s, CEP %s\n",
+                   l->endereco.rua, l->endereco.cep);
+
+            printf("\t\t\tEntrada: R$ %.2f\n", l->entrada);
+            printf("\t\t\tRanking: %.1f\n\n", l->ranking);
+        }
+
+        
+        //             MENU DE NAVEGAÇÃO
+        printf(RED "Opcoes:\n" RESET);
+        if (pagina > 0) printf(RED "V" RESET " - Voltar pagina\n");
+        if (pagina < totalPaginas - 1) printf(RED "P" RESET " - Proxima pagina\n");
+        printf(RED "S" RESET " - Sair\n");
+        printf("Escolha: ");
+
+        char op;
+        scanf(" %c", &op);
+        op = toupper(op);
+
+        if (op == 'P' && pagina < totalPaginas - 1) {
+            pagina++;
+        }
+        else if (op == 'V' && pagina > 0) {
+            pagina--;
+        }
+        else if (op == 'S') {
+            break;
+        }
+        else {
+            printf(RED "Opcao invalida!\n" RESET);
+            pressioneEnter();
+        }
+    }
 }
 
 const char *obterNomeTipoDeLugar(TipoDeLugar tipo) {

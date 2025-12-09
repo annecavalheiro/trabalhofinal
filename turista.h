@@ -11,4 +11,8 @@ TipoDeLugar obterEnumTipoDeLugar(int opcao);
 void adicionarComentario();
 void listarComentarios();
 
+void visualizarLocal(int indiceLocal);
+void adicionarComentarioNoLocal(Local *l);
+void verTodosComentarios(Local *l);
+
 #endif

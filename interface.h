@@ -12,6 +12,6 @@ void iconeadministrador();
 void iconelistar();
 void iconefiltrar();
 void iconecomentarios();
-
+void iconeeventosfuturos();
 
 #endif

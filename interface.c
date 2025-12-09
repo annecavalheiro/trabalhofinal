@@ -114,8 +114,7 @@ void iconelistar() {
     printf("\t\t\t\t\t         "GREEN"#                      #            \n");
     printf("\t\t\t\t\t         "GREEN"#  "RED"##                  "GREEN"#\n");
     printf("\t\t\t\t\t         "GREEN"#  "RED"## ______________   "GREEN"#\n");
-    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
-    printf("\t\t\t\t\t         "GREEN"#                      #            \n");
+    printf("\t\t\t\t\t         "GREEN"#                      #            \n");    
     printf("\t\t\t\t\t         "GREEN"########################            \n");
     printf("\n");
 }
@@ -150,5 +149,23 @@ void iconecomentarios() {
     printf("\t\t\t\t\t             "GREEN"#  #           \n");
     printf("\t\t\t\t\t              "GREEN"##            \n");
     printf("\t\t\t\t\t               "GREEN"#            \n");
+    printf("\n");
+}
+
+void iconeeventosfuturos(){
+	printf("\t\t\t\t               _________________________________ \n");
+    printf("\t\t\t\t              |                                 |\n");
+    printf("\t\t\t\t              | "RED"D    "GREEN"S    T    Q    Q    S    "RED"S "RESET"|\n");
+    printf("\t\t\t\t              |_________________________________|\n");
+    printf("\t\t\t\t              |      "GREEN"##   ##   ##   ##   ##   "RED"##"RESET"|\n");
+    printf("\t\t\t\t              |                                 |\n");
+    printf("\t\t\t\t              | "RED"##   "GREEN"##   ##   ##   ##   ##   "RED"##"RESET"|\n");
+    printf("\t\t\t\t              |                                 |\n");
+    printf("\t\t\t\t              | "RED"##   "GREEN"##   ##   ##   ##   ##   "RED"##"RESET"|\n");
+    printf("\t\t\t\t              |                                 |\n");
+    printf("\t\t\t\t              | "RED"##   "GREEN"##   ##   ##   ##   ##   "RED"##"RESET"|\n");
+    printf("\t\t\t\t              |                                 |\n");
+    printf("\t\t\t\t              | "RED"##   "GREEN"##   ##   ##               "RESET"|\n");
+    printf("\t\t\t\t              |_________________________________|\n");
     printf("\n");
 }

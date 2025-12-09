@@ -17,7 +17,8 @@ void menuUsuario() {
         printf(GREEN"\t\t\t\t\t\t   === MENU DO USUARIO ===\n\n"RESET);
         printf("\t\t\t\t\t\t1 - Listar locais\n");
         printf("\t\t\t\t\t\t2 - Filtrar por Categoria\n");
-        printf("\t\t\t\t\t\t3 - Comentar um lugar\n");        
+        printf("\t\t\t\t\t\t3 - Comentar um lugar\n");   
+		printf("\t\t\t\t\t\t4 - Ver eventos da semana\n"); 
         printf("\t\t\t\t\t\t5 - Sair\n\n");
         printf("\t\t\t\t\t\tEscolha: ");
         if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
@@ -29,7 +30,7 @@ void menuUsuario() {
             case 1: listarLugares(); pressioneEnter(); break;
             case 2: filtrarPorCategoria(); break;
             case 3: adicionarComentario(); break;
-                //case 4: listarComentarios(); break;
+            case 4: listarEventosDaSemana(); break;
             case 5: return;
             default: printf(RED"Opcao invalida!\n"RESET); pressioneEnter();
         }
@@ -46,7 +47,7 @@ void listarLugares() {
         return;
     }
 
-    int porPagina = 1;  // Apenas 1 local por página
+    int porPagina = 1;  // Apenas 1 local por pÃ¡gina
     int pagina = 0;
     int totalPaginas = (numLugares + porPagina - 1) / porPagina;
 
@@ -60,7 +61,7 @@ void listarLugares() {
         int i = pagina;
         Local *l = &listaLugares[i];
 
-        printf("\t\t\t%d) %s\n", i + 1, l->nome);
+        printf("\t\t\t"GREEN"%d) %s"RESET"\n", i + 1, l->nome);
 
         printf("\t\t\tDescricao:\n");
 
@@ -68,7 +69,8 @@ void listarLugares() {
         int maxChars = 80;
         int maxLinhas = 6;
 
-        for (int linha = 0; linha < maxLinhas; linha++) {
+        	int linha;
+			for (linha = 0; linha < maxLinhas; linha++) {
             int ini = linha * maxChars;
 
             if (ini >= tam)
@@ -78,7 +80,7 @@ void listarLugares() {
             strncpy(buffer, l->descricao + ini, maxChars);
             buffer[maxChars] = '\0';
 
-            printf("\t\t\t   %s\n", buffer);
+            printf("\t\t\t %s\n", buffer);
         }
 
         if (tam > maxLinhas * maxChars)
@@ -92,7 +94,8 @@ void listarLugares() {
         printf("\t\t\tContato: ");
         if (l->contato.qtdeTelefone == 0) printf("nenhum");
         else {
-            for (int t = 0; t < l->contato.qtdeTelefone; t++) {
+            int t;
+			for (t = 0; t < l->contato.qtdeTelefone; t++) {
                 if (t) printf(", ");
                 printf("%s", l->contato.telefones[t]);
             }
@@ -101,7 +104,8 @@ void listarLugares() {
         printf("\n\t\t\tCategorias: ");
         if (l->qtdTipos == 0) printf("nenhuma");
         else {
-            for (int c = 0; c < l->qtdTipos; c++) {
+            int c;
+			for (c = 0; c < l->qtdTipos; c++) {
                 if (c) printf(", ");
                 printf("%s", obterNomeTipoDeLugar(l->tipos[c]));
             }
@@ -109,7 +113,7 @@ void listarLugares() {
 
         printf("\n\n");
 
-        //       MENU DE NAVEGAÇÃO
+        //       MENU DE NAVEGAÃ‡ÃƒO
         printf("" RED "Opcoes:" RESET "\n");
         if (pagina > 0) printf("" RED "V" RESET " - Voltar pagina");
         if (pagina < totalPaginas - 1) printf("\t\t" RED "P" RESET " - Proxima pagina");
@@ -144,7 +148,7 @@ void filtrarPorCategoria() {
 
     int opcao;
 
-    printf("\n\t\t\t\t\t\t=== FILTRAR POR CATEGORIA ===\n");
+    printf("\n\t\t\t\t\t\t"GREEN"=== FILTRAR POR CATEGORIA ==="RESET"\n");
     printf("\t\t\t1 - Patrimonio Historico     6 - Culinaria Regional      11 - Museu\n");
     printf("\t\t\t2 - Cultural                 7 - Indigena                12 - Cinema\n");
     printf("\t\t\t3 - Igreja                   8 - Bar                     13 - Saude Publica\n");
@@ -162,14 +166,16 @@ void filtrarPorCategoria() {
 
     TipoDeLugar categoriaEscolhida = obterEnumTipoDeLugar(opcao);
 
-    //    CRIA UMA LISTA TEMPORÁRIA COM RESULTADOS
+    //    CRIA UMA LISTA TEMPORÃRIA COM RESULTADOS
     Local *resultado[100];
     int qtd = 0;
 
-    for (int i = 0; i < numLugares; i++) {
+    int i;
+	 for (i = 0; i < numLugares; i++) {
         int temCategoria = 0;
 
-        for (int t = 0; t < listaLugares[i].qtdTipos; t++) {
+        int t; 
+		for (t = 0; t < listaLugares[i].qtdTipos; t++) {
             if (listaLugares[i].tipos[t] == categoriaEscolhida) {
                 temCategoria = 1;
                 break;
@@ -187,7 +193,7 @@ void filtrarPorCategoria() {
         return;
     }
 
-    //       PAGINAÇÃO (2 LOCAIS POR PÁGINA)
+    //       PAGINAÃ‡ÃƒO (2 LOCAIS POR PÃGINA)
     int porPagina = 2;
     int pagina = 0;
     int totalPaginas = (qtd + porPagina - 1) / porPagina;
@@ -198,7 +204,7 @@ void filtrarPorCategoria() {
     while (1) {
 
         limparTela();
-        printf(GREEN "\n\t\t\t=== RESULTADOS (%d) - Página %d/%d ===\n\n" RESET,
+        printf(GREEN "\n\t\t\t\t\t=== RESULTADOS (%d) - PÃ¡gina %d/%d ===\n\n" RESET,
             qtd, pagina + 1, totalPaginas);
 
         int inicio = pagina * porPagina;
@@ -207,16 +213,18 @@ void filtrarPorCategoria() {
         if (fim > qtd)
             fim = qtd;
 
-        // MOSTRA SOMENTE OS 2 LOCAIS DA PÁGINA
-        for (int i = inicio; i < fim; i++) {
+        // MOSTRA SOMENTE OS 2 LOCAIS DA PÃGINA
+        int i;
+		for (i = inicio; i < fim; i++) {
             Local *l = resultado[i];
 
-            printf("\t\t\t--- %s ---\n", l->nome);
+            printf("\t\t\t\t\t"GREEN"--- %s ---"RESET"\n", l->nome);
             printf("\t\t\tDescricao:\n");
 
             int tam = strlen(l->descricao);
 
-            for (int linha = 0; linha < maxLinhas; linha++) {
+            int linha;
+			for (linha = 0; linha < maxLinhas; linha++) {
                 int ini = linha * maxChars;
                 if (ini >= tam)
                     break;
@@ -239,11 +247,11 @@ void filtrarPorCategoria() {
         }
 
 
-        //             MENU DE NAVEGAÇÃO
+        //             MENU DE NAVEGAÃ‡ÃƒO
         printf(RED "Opcoes:\n" RESET);
-        if (pagina > 0) printf(RED "V" RESET " - Voltar pagina\n");
-        if (pagina < totalPaginas - 1) printf(RED "P" RESET " - Proxima pagina\n");
-        printf(RED "S" RESET " - Sair\n");
+        if (pagina > 0) printf(RED "\tV" RESET " - Voltar pagina");
+        if (pagina < totalPaginas - 1) printf(RED "\t\tP" RESET " - Proxima pagina");
+        printf(RED "\t\t\tS" RESET " - Sair\n");
         printf("Escolha: ");
 
         char op;
@@ -288,6 +296,56 @@ TipoDeLugar obterEnumTipoDeLugar(int opcao) {
     return OUTRO;
 }
 
+void listarEventosDaSemana() {
+    iconeeventosfuturos();
+
+    FILE *arq = fopen("eventos.txt", "r");
+    char linha[350];
+
+    if (!arq) {
+        printf("Erro ao abrir o arquivo eventos.txt!\n");
+        return;
+    }
+
+    printf("\t\t\t\t"GREEN"===== EVENTOS FUTUROS DA SEMANA (10 a 17 de dezembro) ====="RESET"\n\n");
+
+    char datas[][20] = {
+        "10/12/2025", "11/12/2025", "12/12/2025", "13/12/2025",
+        "14/12/2025", "15/12/2025", "16/12/2025", "17/12/2025"
+    };
+
+    int encontrou = 0;
+
+    while (fgets(linha, sizeof(linha), arq)) {
+        if (linha[0] == '#' || strlen(linha) < 5)
+            continue; // ignora comentários e linhas vazias
+
+        char local[100], evento[200], horario[50];
+        int diaEnum;
+
+        // leitura com horário
+        if (sscanf(linha, "%99[^;];%199[^;];%d;%49[^;\n]", local, evento, &diaEnum, horario) == 4) {
+
+            if (diaEnum >= 0 && diaEnum <= 7) {
+                encontrou = 1;
+
+                printf("\t\t\t\tData: %s\n", datas[diaEnum]);
+                printf("\t\t\t\tLocal: %s\n", local);
+                printf("\t\t\t\tEvento: %s\n", evento);
+                printf("\t\t\t\tHorário: %s\n", horario);
+                printf("\t\t\t\t-------------------------------\n");
+            }
+        }
+    }
+
+    if (!encontrou) {
+        printf("Nenhum evento encontrado para esta semana.\n");
+    }
+
+    fclose(arq);
+    pressioneEnter();
+}
+
 void adicionarComentario() {
     iconecomentarios();
     if (numLugares == 0) {
@@ -306,10 +364,10 @@ void adicionarComentario() {
         limparTela();
         iconecomentarios();
 
-        printf(GREEN"\n\t\t\t=== ESCOLHA UM LUGAR PARA COMENTAR ===\n"RESET);
-        printf(GREEN"\t\t\t   (Página %d de %d)\n\n"RESET, paginaAtual + 1, totalPaginas);
+        printf(GREEN"\n\t\t\t\t=== ESCOLHA UM LUGAR PARA COMENTAR ===\n"RESET);
+        printf(GREEN"\t\t\t   (PÃ¡gina %d de %d)\n\n"RESET, paginaAtual + 1, totalPaginas);
 
-        // Exibir locais da página atual
+        // Exibir locais da pÃ¡gina atual
         int inicio = paginaAtual * itensPorPagina;
         int fim = inicio + itensPorPagina;
         if (fim > numLugares) fim = numLugares;
@@ -318,17 +376,18 @@ void adicionarComentario() {
         printf("\t\t\t| N  | NOME DO LOCAL                        |\n");
         printf("\t\t\t+----+--------------------------------------+\n");
 
-        for (int i = inicio; i < fim; i++) {
+        int i;
+		for (i = inicio; i < fim; i++) {
             printf("\t\t\t| %-2d | %-36.36s |\n", i + 1, listaLugares[i].nome);
         }
 
         printf("\t\t\t+----+--------------------------------------+\n\n");
 
-        // Opções de Navegação
-        printf("\t\t\t[N] Próxima página  ");
-        printf("[A] Página anterior  ");
+        // OpÃ§Ãµes de NavegaÃ§Ã£o
+        printf("\t\t\t[N] PrÃ³xima pÃ¡gina  ");
+        printf("[A] PÃ¡gina anterior  ");
         printf("[S] Sair\n");
-        printf("\t\t\tOu Digite o número do local: ");
+        printf("\t\t\tOu Digite o nÃºmero do local: ");
 
         if (scanf("%9s", comando) != 1) {
             limparBuffer();
@@ -336,7 +395,7 @@ void adicionarComentario() {
         }
         limparBuffer();
 
-        // Verificar se é comando de navegação
+        // Verificar se Ã© comando de navegaÃ§Ã£o
         if (tolower(comando[0]) == 'n' && strlen(comando) == 1) {
             if (paginaAtual < totalPaginas - 1) {
                 paginaAtual++;
@@ -361,7 +420,7 @@ void adicionarComentario() {
             return;
         }
 
-        // Tentar converter para número
+        // Tentar converter para nÃºmero
         opcao = atoi(comando);
 
         if (opcao < 1 || opcao > numLugares) {
@@ -382,7 +441,7 @@ void listarComentarios() {
 
     if (scanf("%d", &escolha) != 1 || escolha < 1 || escolha > numLugares) {
         limparBuffer();
-        printf(RED"Opção inválida!\n"RESET);
+        printf(RED"OpÃ§Ã£o invÃ¡lida!\n"RESET);
         return;
     }
     limparBuffer();
@@ -396,7 +455,8 @@ void listarComentarios() {
         return;
     }
 
-    for (int i = 0; i < l->numComentarios; i++) {
+    int i;
+	for (i = 0; i < l->numComentarios; i++) {
         Comentario *c = &l->comentarios[i];
         printf("Autor: %s\n", c->autor);
         printf("Comentario: %s\n", c->texto);
@@ -413,23 +473,24 @@ void visualizarLocal(int indiceLocal) {
     while (1) {
         limparTela();
 
-        // CABEÇALHO DO LOCAL
-        printf(GREEN"\n\t\t╔════════════════════════════════════════════════════════════════╗\n"RESET);
-        printf(GREEN"\t\t║"RESET"  %-60s  "GREEN"║\n"RESET, l->nome);
-        printf(GREEN"\t\t╚════════════════════════════════════════════════════════════════╝\n\n"RESET);
+        // CABEÃ‡ALHO DO LOCAL
+        printf(GREEN"\n\t\tâ•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—\n"RESET);
+        printf(GREEN"\t\tâ•‘"RESET"  %-60s  "GREEN"â•‘\n"RESET, l->nome);
+        printf(GREEN"\t\tâ•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n\n"RESET);
 
-        // DESCRIÇÃO
-        printf(GREEN"\t📝 DESCRIÇÃO:\n"RESET);
+        // DESCRIÃ‡ÃƒO
+        printf(GREEN"\tðŸ“ DESCRIÃ‡ÃƒO:\n"RESET);
         printf("\t   %s\n\n", l->descricao);
 
-        // INFORMAÇÕES DO LOCAL
-        printf(GREEN"\t📍 ENDEREÇO:\n"RESET);
+        // INFORMAÃ‡Ã•ES DO LOCAL
+        printf(GREEN"\tðŸ“ ENDEREÃ‡O:\n"RESET);
         printf("\t   %s - CEP: %s\n\n", l->endereco.rua, l->endereco.cep);
 
-        printf(GREEN"\t📞 CONTATO:\n"RESET);
+        printf(GREEN"\tðŸ“ž CONTATO:\n"RESET);
         if (l->contato.qtdeTelefone > 0) {
             printf("\t   Telefones: ");
-            for (int t = 0; t < l->contato.qtdeTelefone; t++) {
+            int t;
+			for (t = 0; t < l->contato.qtdeTelefone; t++) {
                 if (t > 0) printf(", ");
                 printf("%s", l->contato.telefones[t]);
             }
@@ -444,12 +505,13 @@ void visualizarLocal(int indiceLocal) {
         printf("\n");
 
         // CATEGORIAS
-        printf(GREEN"\t🏷️  CATEGORIAS:\n"RESET);
+        printf(GREEN"\tðŸ·ï¸  CATEGORIAS:\n"RESET);
         printf("\t   ");
         if (l->qtdTipos == 0) {
             printf("Nenhuma categoria");
         } else {
-            for (int c = 0; c < l->qtdTipos; c++) {
+            int c;
+			for (c = 0; c < l->qtdTipos; c++) {
                 if (c > 0) printf(", ");
                 printf("%s", obterNomeTipoDeLugar(l->tipos[c]));
             }
@@ -457,50 +519,51 @@ void visualizarLocal(int indiceLocal) {
         printf("\n\n");
 
         // ENTRADA E RANKING
-        printf(GREEN"\t💰 ENTRADA:\n"RESET);
+        printf(GREEN"\tðŸ’° ENTRADA:\n"RESET);
         printf("\t   R$ %.2f\n\n", l->entrada);
 
-        printf(GREEN"\t⭐ RANKING:\n"RESET);
+        printf(GREEN"\tâ­ RANKING:\n"RESET);
         if (l->numComentarios > 0) {
-            printf("\t   %.1f/5.0 (%d avaliações)\n\n", l->ranking, l->numComentarios);
+            printf("\t   %.1f/5.0 (%d avaliaÃ§Ãµes)\n\n", l->ranking, l->numComentarios);
         } else {
-            printf("\t   Sem avaliações ainda\n\n");
+            printf("\t   Sem avaliaÃ§Ãµes ainda\n\n");
         }
 
-        // COMENTÁRIOS
-        printf(GREEN"\t💬 COMENTÁRIOS (%d):\n"RESET, l->numComentarios);
-        printf("\t   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        // COMENTÃRIOS
+        printf(GREEN"\tðŸ’¬ COMENTÃRIOS (%d):\n"RESET, l->numComentarios);
+        printf("\t   â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n");
 
         if (l->numComentarios == 0) {
-            printf("\t   Nenhum comentário ainda. Seja o primeiro a comentar!\n");
+            printf("\t   Nenhum comentÃ¡rio ainda. Seja o primeiro a comentar!\n");
         } else {
-            // Mostrar últimos 3 comentários
+            // Mostrar Ãºltimos 3 comentÃ¡rios
             int inicio = (l->numComentarios > 3) ? l->numComentarios - 3 : 0;
 
-            for (int i = inicio; i < l->numComentarios; i++) {
+            int i;
+			for (i = inicio; i < l->numComentarios; i++) {
                 Comentario *c = &l->comentarios[i];
-                printf("\n\t   👤 %s", c->autor);
-                printf(" - ⭐ %.1f\n", c->nota);
+                printf("\n\t   ðŸ‘¤ %s", c->autor);
+                printf(" - â­ %.1f\n", c->nota);
                 printf("\t   \"%s\"\n", c->texto);
 
                 if (i < l->numComentarios - 1) {
-                    printf("\t   ──────────────────────────────────────────────────────────\n");
+                    printf("\t   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€\n");
                 }
             }
 
             if (l->numComentarios > 3) {
-                printf("\n\t   ... e mais %d comentário(s)\n", l->numComentarios - 3);
+                printf("\n\t   ... e mais %d comentÃ¡rio(s)\n", l->numComentarios - 3);
             }
         }
 
-        printf("\t   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        printf("\t   â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n\n");
 
-        // MENU DE OPÇÕES
-        printf(RED"\t╔═══════════════════════════════════╗\n"RESET);
-        printf(RED"\t║"RESET"  [C] Adicionar Comentário      "RED"║\n"RESET);
-        printf(RED"\t║"RESET"  [V] Ver Todos os Comentários  "RED"║\n"RESET);
-        printf(RED"\t║"RESET"  [S] Voltar                    "RED"║\n"RESET);
-        printf(RED"\t╚═══════════════════════════════════╝\n"RESET);
+        // MENU DE OPÃ‡Ã•ES
+        printf(RED"\tâ•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—\n"RESET);
+        printf(RED"\tâ•‘"RESET"  [C] Adicionar ComentÃ¡rio      "RED"â•‘\n"RESET);
+        printf(RED"\tâ•‘"RESET"  [V] Ver Todos os ComentÃ¡rios  "RED"â•‘\n"RESET);
+        printf(RED"\tâ•‘"RESET"  [S] Voltar                    "RED"â•‘\n"RESET);
+        printf(RED"\tâ•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n"RESET);
         printf("\n\tEscolha: ");
 
         char opcao;
@@ -515,7 +578,7 @@ void visualizarLocal(int indiceLocal) {
         } else if (opcao == 'S') {
             return;
         } else {
-            printf(RED"\n\tOpção inválida!\n"RESET);
+            printf(RED"\n\tOpÃ§Ã£o invÃ¡lida!\n"RESET);
             pressioneEnter();
         }
     }
@@ -524,40 +587,40 @@ void visualizarLocal(int indiceLocal) {
 void adicionarComentarioNoLocal(Local *l) {
     if (l->numComentarios >= MAX_COMENTARIO) {
         limparTela();
-        printf(RED"\n\tEste local atingiu o limite de comentários.\n"RESET);
+        printf(RED"\n\tEste local atingiu o limite de comentÃ¡rios.\n"RESET);
         pressioneEnter();
         return;
     }
 
     limparTela();
-    printf(GREEN"\n\t╔════════════════════════════════════════════════════════════════╗\n"RESET);
-    printf(GREEN"\t║"RESET"  ADICIONAR COMENTÁRIO - %-38s  "GREEN"║\n"RESET, l->nome);
-    printf(GREEN"\t╚════════════════════════════════════════════════════════════════╝\n\n"RESET);
+    printf(GREEN"\n\tâ•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—\n"RESET);
+    printf(GREEN"\tâ•‘"RESET"  ADICIONAR COMENTÃRIO - %-38s  "GREEN"â•‘\n"RESET, l->nome);
+    printf(GREEN"\tâ•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n\n"RESET);
 
     Comentario *c = &l->comentarios[l->numComentarios];
 
-    // Usar automaticamente o nome do usuário logado
+    // Usar automaticamente o nome do usuÃ¡rio logado
     if (currentUser[0] != '\0') {
         strncpy(c->autor, currentUser, sizeof(c->autor) - 1);
         c->autor[sizeof(c->autor) - 1] = '\0';
-        printf(GREEN"\t👤 Autor: "RESET"%s (usuário logado)\n\n", c->autor);
+        printf(GREEN"\tðŸ‘¤ Autor: "RESET"%s (usuÃ¡rio logado)\n\n", c->autor);
     } else {
-        printf(GREEN"\t👤 Seu nome: "RESET);
+        printf(GREEN"\tðŸ‘¤ Seu nome: "RESET);
         fgets(c->autor, sizeof(c->autor), stdin);
         trim_nl(c->autor);
         printf("\n");
     }
 
-    printf(GREEN"\t💬 Seu comentário:\n\t   "RESET);
+    printf(GREEN"\tðŸ’¬ Seu comentÃ¡rio:\n\t   "RESET);
     fgets(c->texto, sizeof(c->texto), stdin);
     trim_nl(c->texto);
 
-    printf(GREEN"\n\t⭐ Sua nota (0 a 5): "RESET);
+    printf(GREEN"\n\tâ­ Sua nota (0 a 5): "RESET);
     while (1) {
         if (scanf("%f", &c->nota) != 1 || c->nota < 0 || c->nota > 5) {
             limparBuffer();
             printf("\033[1A\033[2K");
-            printf(RED"\t⭐ Nota inválida! Digite novamente (0 a 5): "RESET);
+            printf(RED"\tâ­ Nota invÃ¡lida! Digite novamente (0 a 5): "RESET);
         } else {
             break;
         }
@@ -566,14 +629,15 @@ void adicionarComentarioNoLocal(Local *l) {
 
     l->numComentarios++;
 
-    // Recalcular ranking médio
+    // Recalcular ranking mÃ©dio
     float soma = 0;
-    for (int i = 0; i < l->numComentarios; i++) {
+    int i;
+	for (i = 0; i < l->numComentarios; i++) {
         soma += l->comentarios[i].nota;
     }
     l->ranking = soma / l->numComentarios;
 
-    printf(GREEN"\n\t✅ Comentário adicionado com sucesso!\n"RESET);
+    printf(GREEN"\n\tâœ… ComentÃ¡rio adicionado com sucesso!\n"RESET);
     printf("\t   Novo ranking do local: %.1f/5.0\n", l->ranking);
     pressioneEnter();
 }
@@ -581,25 +645,26 @@ void adicionarComentarioNoLocal(Local *l) {
 void verTodosComentarios(Local *l) {
     limparTela();
 
-    printf(GREEN"\n\t╔════════════════════════════════════════════════════════════════╗\n"RESET);
-    printf(GREEN"\t║"RESET"  TODOS OS COMENTÁRIOS - %-38s  "GREEN"║\n"RESET, l->nome);
-    printf(GREEN"\t╚════════════════════════════════════════════════════════════════╝\n\n"RESET);
+    printf(GREEN"\n\tâ•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—\n"RESET);
+    printf(GREEN"\tâ•‘"RESET"  TODOS OS COMENTÃRIOS - %-38s  "GREEN"â•‘\n"RESET, l->nome);
+    printf(GREEN"\tâ•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n\n"RESET);
 
     if (l->numComentarios == 0) {
-        printf("\t   Nenhum comentário ainda.\n\n");
+        printf("\t   Nenhum comentÃ¡rio ainda.\n\n");
     } else {
-        printf(GREEN"\t   Total: %d comentário(s) | Ranking: %.1f/5.0\n\n"RESET,
+        printf(GREEN"\t   Total: %d comentÃ¡rio(s) | Ranking: %.1f/5.0\n\n"RESET,
             l->numComentarios, l->ranking);
 
-        for (int i = 0; i < l->numComentarios; i++) {
+        int i;
+		for (i = 0; i < l->numComentarios; i++) {
             Comentario *c = &l->comentarios[i];
 
-            printf("\t   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-            printf("\t   👤 %s", c->autor);
-            printf(" - ⭐ %.1f\n", c->nota);
-            printf("\t   💬 \"%s\"\n", c->texto);
+            printf("\t   â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n");
+            printf("\t   ðŸ‘¤ %s", c->autor);
+            printf(" - â­ %.1f\n", c->nota);
+            printf("\t   ðŸ’¬ \"%s\"\n", c->texto);
         }
-        printf("\t   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        printf("\t   â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”\n");
     }
 
     printf("\n");

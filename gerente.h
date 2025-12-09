@@ -60,6 +60,7 @@ void menuAdmin();
 void inserirLugar();
 int login();
 void cadastrarUsuario();
+void cadastrarEventoFuturo();
 int menuInicial();
 void salvarTxt(const char *nome_arquivo);
 void carregarTxt(const char *nome_arquivo);

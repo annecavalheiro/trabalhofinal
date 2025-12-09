@@ -62,7 +62,7 @@ void inserirLugar() {
     fgets(novoLugar.contato.site, sizeof(novoLugar.contato.site), stdin);
     trim_nl(novoLugar.contato.site);
 	limparTela();
-	printf("\n\t\t\t\t=== CADASTRO DE NOVO LUGAR ===\n");
+	printf("\n\t\t\t\t\t"GREEN"=== CADASTRO DE NOVO LUGAR ==="RESET"\n");
 	
     /* categorias multiplas */
     novoLugar.qtdTipos = 0;
@@ -135,14 +135,15 @@ void editarLocal() {
     }
 
     limparTela();
-    printf("\n\t\t\t=== EDITAR LOCAL ===\n");
+    printf("\n\t\t\t\t\t"GREEN"=== EDITAR LOCAL ==="RESET"\n");
 
-    // Mostrar todos os lugares com �ndice
-    for (int i = 0; i < numLugares; i++) {
-        printf("\t%d - %s\n", i + 1, listaLugares[i].nome);
+    // Mostrar todos os lugares com ï¿½ndice
+    int i;
+    for (i = 0; i < numLugares; i++) {
+        printf("\t\t\t\t%d - %s\n", i + 1, listaLugares[i].nome);
     }
 
-    printf("\n\tEscolha o n�mero do local que deseja editar: ");
+    printf("\n\t\tEscolha o nï¿½mero do local que deseja editar: ");
     int escolha;
     if (scanf("%d", &escolha) != 1) {
         limparBuffer();
@@ -151,7 +152,7 @@ void editarLocal() {
     limparBuffer();
 
     if (escolha < 1 || escolha > numLugares) {
-        printf(RED"\nOpção inválida!\n"RESET);
+        printf(RED"\nOpÃ§Ã£o invÃ¡lida!\n"RESET);
         pressioneEnter();
         return;
     }
@@ -162,17 +163,17 @@ void editarLocal() {
 
     while (1) {
         limparTela();
-        printf("\n\t\t=== Editando: %s ===\n", L->nome);
+        printf("\n\t\t\t\t\t"GREEN"=== Editando: %s ==="RESET"\n", L->nome);
 
-        printf("\n\t1 - Editar Nome");
-        printf("\n\t2 - Editar Descricao");
-        printf("\n\t3 - Editar Endereco");
-        printf("\n\t4 - Editar Contato");
-        printf("\n\t5 - Editar Categorias");
-        printf("\n\t6 - Editar Valor da Entrada");
-        printf("\n\t0 - Voltar");
+        printf("\n\t\t\t\t1 - Editar Nome");
+        printf("\n\t\t\t\t2 - Editar Descricao");
+        printf("\n\t\t\t\t3 - Editar Endereco");
+        printf("\n\t\t\t\t4 - Editar Contato");
+        printf("\n\t\t\t\t5 - Editar Categorias");
+        printf("\n\t\t\t\t6 - Editar Valor da Entrada");
+        printf("\n\t\t\t\t0 - Voltar");
 
-        printf("\n\n\tEscolha: ");
+        printf("\n\n\t\t\t\tEscolha: ");
         if (scanf("%d", &opcao) != 1) {
             limparBuffer();
             continue;
@@ -184,49 +185,50 @@ void editarLocal() {
         switch (opcao) {
 
             case 1: {
-                printf("\nNovo nome: ");
+                printf("\n\t\t\tNovo nome: ");
                 fgets(L->nome, MAX_NOME, stdin);
                 trim_nl(L->nome);
                 break;
             }
 
             case 2: {
-                printf("\nNova descricao: ");
+                printf("\n\t\t\tNova descricao: ");
                 fgets(L->descricao, sizeof(L->descricao), stdin);
                 trim_nl(L->descricao);
                 break;
             }
 
             case 3: {
-                printf("\nNova rua: ");
+                printf("\n\t\t\tNova rua: ");
                 fgets(L->endereco.rua, sizeof(L->endereco.rua), stdin);
                 trim_nl(L->endereco.rua);
 
-                printf("\nNovo CEP: ");
+                printf("\n\t\t\tNovo CEP: ");
                 fgets(L->endereco.cep, sizeof(L->endereco.cep), stdin);
                 trim_nl(L->endereco.cep);
                 break;
             }
 
             case 4: {
-                printf("\nQuantos telefones (max 3): ");
+                printf("\n\t\t\tQuantos telefones (max 3): ");
                 scanf("%d", &L->contato.qtdeTelefone);
                 limparBuffer();
 
                 if (L->contato.qtdeTelefone > MAX_TELEFONES)
                     L->contato.qtdeTelefone = MAX_TELEFONES;
 
-                for (int i = 0; i < L->contato.qtdeTelefone; i++) {
-                    printf("Telefone %d: ", i + 1);
+                int i;
+				for (i = 0; i < L->contato.qtdeTelefone; i++) {
+                    printf("\t\t\tTelefone %d: ", i + 1);
                     fgets(L->contato.telefones[i], 30, stdin);
                     trim_nl(L->contato.telefones[i]);
                 }
 
-                printf("E-mail: ");
+                printf("\t\t\tE-mail: ");
                 fgets(L->contato.email, 50, stdin);
                 trim_nl(L->contato.email);
 
-                printf("Site: ");
+                printf("\t\t\tSite: ");
                 fgets(L->contato.site, 50, stdin);
                 trim_nl(L->contato.site);
 
@@ -237,11 +239,11 @@ void editarLocal() {
                 L->qtdTipos = 0;
                 int c;
 
-                printf("\n--- NOVAS CATEGORIAS ---\n");
+                printf("\n\t\t\t--- NOVAS CATEGORIAS ---\n");
                 printf("Digite 0 para terminar.\n");
 
                 while (1) {
-                    printf("Categoria (1-14): ");
+                    printf("\t\t\tCategoria (1-14): ");
                     if (scanf("%d", &c) != 1) {
                         limparBuffer();
                         continue;
@@ -264,10 +266,10 @@ void editarLocal() {
 
             case 6: {
                 while (1) {
-                    printf("\nNovo valor de entrada (R$): ");
+                    printf("\n\t\t\tNovo valor de entrada (R$): ");
                     if (scanf("%f", &L->entrada) != 1) {
                         limparBuffer();
-                        printf(RED"Valor inválido!\n"RESET);
+                        printf(RED"Valor invÃ¡lido!\n"RESET);
                         continue;
                     }
                     limparBuffer();
@@ -285,7 +287,7 @@ void editarLocal() {
                 printf(RED"\nOpcao invalida!\n"RESET);
         }
 
-        printf(GREEN"\nAlteração salva!\n"RESET);
+        printf(GREEN"\nAlteraÃ§Ã£o salva!\n"RESET);
         pressioneEnter();
     }
 }
@@ -297,13 +299,14 @@ void excluirLocal() {
     }
 
     limparTela();
-    printf("\n\t\t\t=== EXCLUIR LOCAL ===\n");
+    printf("\n\t\t\t\t\t\t\t"GREEN"=== EXCLUIR LOCAL ==="RESET"\n");
 
-    for (int i = 0; i < numLugares; i++) {
-        printf("\t%d - %s\n", i + 1, listaLugares[i].nome);
+    int i;
+	for (i = 0; i < numLugares; i++) {
+        printf("\t\t\t\t\t%d - %s\n", i + 1, listaLugares[i].nome);
     }
 
-    printf("\n\tEscolha o n�mero do local que deseja excluir: ");
+    printf("\n\t\t\t\t\tEscolha o nï¿½mero do local que deseja excluir: ");
     int escolha;
     if (scanf("%d", &escolha) != 1) {
         return;
@@ -311,23 +314,23 @@ void excluirLocal() {
     limparBuffer();
 
     if (escolha < 1 || escolha > numLugares) {
-        printf(RED"\nOpção inválida!\n"RESET);
+        printf(RED"\nOpÃ§Ã£o invÃ¡lida!\n"RESET);
         return;
     }
 
     int idx = escolha - 1;
 
-    printf(RED"\nTem certeza que deseja excluir '%s'? (s/n): "RESET, listaLugares[idx].nome);
+    printf(RED"\n\t\t\t\tTem certeza que deseja excluir '%s'? (s/n): "RESET, listaLugares[idx].nome);
     char c = getchar();
     limparBuffer();
 
     if (tolower(c) != 's') {
-        printf("\nOperação cancelada.\n");
+        printf("\nOperaÃ§Ã£o cancelada.\n");
         return;
     }
 
     // Remover deslocando o vetor
-    for (int i = idx; i < numLugares - 1; i++) {
+    for (i = idx; i < numLugares - 1; i++) {
         listaLugares[i] = listaLugares[i + 1];
     }
 
@@ -369,14 +372,14 @@ void menuAdmin() {
         limparTela();
         cabecalho();
 
-        printf(GREEN"=== MENU DO ADMINISTRADOR ===\n\n"RESET);
-        printf("1 - Cadastrar local\n");
-        printf("2 - Editar local\n");
-        printf("3 - Excluir local\n");
-        printf("4 - Salvar dados\n");
-        printf("5 - Carregar dados\n");
-        printf("6 - Sair\n\n");
-        printf("Escolha: ");
+        printf(GREEN"\t\t\t\t\t\t  ==== MENU DO ADMINISTRADOR ====\n\n"RESET);
+        printf("\t\t\t\t\t  1 - Cadastrar local\n");
+        printf("\t\t\t\t\t  2 - Editar local\n");
+        printf("\t\t\t\t\t  3 - Excluir local\n");
+        printf("\t\t\t\t\t  4 - Salvar dados\n");
+        printf("\t\t\t\t\t  5 - Cadastrar evento futuro\n");
+        printf("\t\t\t\t\t  6 - Sair\n\n");
+        printf("\t\t\t\t\t  Escolha: ");
         if (scanf("%d", &opcao) != 1) { limparBuffer(); opcao = -1; }
         limparBuffer();
 
@@ -387,7 +390,7 @@ void menuAdmin() {
             case 2: editarLocal(); break;
             case 3: excluirLocal(); break;
             case 4: salvarTxt("lugares.dat"); pressioneEnter(); break;
-            case 5: carregarTxt("lugares.dat"); printf("Dados carregados.\n"); pressioneEnter(); break;
+            case 5: cadastrarEventoFuturo(); pressioneEnter(); break;
             case 6: return;
             default: printf(RED"Opcao invalida!\n"RESET); pressioneEnter();
         }
@@ -404,7 +407,7 @@ int login() {
 
     printf(GREEN"\t\t\t\t\t\t === LOGIN ===\n\n"RESET);
 
-    printf("\t\t\t\t\tUsuário: ");
+    printf("\t\t\t\t\tUsuÃ¡rio: ");
     if (scanf("%49s", usuario) != 1) { limparBuffer(); return 0; }
 
     printf("\t\t\t\t\tSenha: ");
@@ -422,7 +425,7 @@ int login() {
         if (strcmp(usuario, fileUser) == 0 && strcmp(senha, filePass) == 0) {
             fclose(arq);
 
-            /* armazenar nome do usuário logado */
+            /* armazenar nome do usuÃ¡rio logado */
             strncpy(currentUser, usuario, sizeof(currentUser)-1);
             currentUser[sizeof(currentUser)-1] = '\0';
 
@@ -442,6 +445,75 @@ int login() {
 
     return 0;
 }
+void cadastrarEventoFuturo() {
+    FILE *arq = fopen("eventos.txt", "a");
+
+    if (!arq) {
+        printf("Erro ao abrir eventos.txt!\n");
+        return;
+    }
+
+    int opcaoVoltar = -1;
+
+    printf("\n\t\t\t\t"GREEN"===== CADASTRAR EVENTO FUTURO ====="RESET"\n");
+
+    printf("\t\t\t\tDigite 0 para VOLTAR ou 1 para CONTINUAR\n");
+    printf("\t\t\t\tOpção: ");
+    scanf("\t\t\t\t%d", &opcaoVoltar);
+    getchar(); // limpar buffer
+
+    if (opcaoVoltar == 0) {
+        printf("\n\t\t\t\tVoltando ao menu anterior...\n");
+        fclose(arq);
+        return;
+    }
+
+    
+    // CONTINUA O CADASTRO DO EVENTO    
+
+    char local[100], evento[200];
+    char horario[50];
+    int diaEnum;
+
+    printf("\t\t\t\tLocal do evento: ");
+    fgets(local, sizeof(local), stdin);
+    local[strcspn(local, "\n")] = '\0';
+
+    printf("\t\t\t\tDescrição do evento: ");
+    fgets(evento, sizeof(evento), stdin);
+    evento[strcspn(evento, "\n")] = '\0';
+
+    printf("\n\t\t\t\tEscolha o dia (0 a 7):\n");
+    printf("\t\t\t\t0 - 10/12/2025\n");
+    printf("\t\t\t\t1 - 11/12/2025\n");
+    printf("\t\t\t\t2 - 12/12/2025\n");
+    printf("\t\t\t\t3 - 13/12/2025\n");
+    printf("\t\t\t\t4 - 14/12/2025\n");
+    printf("\t\t\t\t5 - 15/12/2025\n");
+    printf("\t\t\t\t6 - 16/12/2025\n");
+    printf("\t\t\t\t7 - 17/12/2025\n");
+    printf("Dia: ");
+    scanf("%d", &diaEnum);
+    getchar();
+
+    if (diaEnum < 0 || diaEnum > 7) {
+        printf("Dia inválido! Evento não cadastrado.\n");
+        fclose(arq);
+        return;
+    }
+
+    printf("\t\t\t\tHorário do evento (ex: '20h'): ");
+    fgets(horario, sizeof(horario), stdin);
+    horario[strcspn(horario, "\n")] = '\0';
+
+    // grava no txt
+    fprintf(arq, "%s;%s;%d;%s\n", local, evento, diaEnum, horario);
+
+    fclose(arq);
+
+    printf("\nEvento cadastrado com sucesso!\n");
+}
+
 
 void cadastrarUsuario() {
     limparTela();
@@ -480,7 +552,7 @@ int menuInicial() {
         cabecalho();
 
         printf("\t\t\t\t\t\t1 - Login\n");
-        printf("\t\t\t\t\t\t2 - Cadastrar Usuário\n");
+        printf("\t\t\t\t\t\t2 - Cadastrar UsuÃ¡rio\n");
         printf("\t\t\t\t\t\t3 - Login como Administrador\n");
         printf("\t\t\t\t\t\t4 - Sair\n");
 
@@ -499,7 +571,7 @@ int menuInicial() {
             case 4:
                 exit(0);
             default:
-                printf(RED"\nOpção Inválida!\n"RESET);
+                printf(RED"\nOpÃ§Ã£o InvÃ¡lida!\n"RESET);
                 pressioneEnter();
                 printf("Pressione ENTER para continuar...");
                 limparBuffer();

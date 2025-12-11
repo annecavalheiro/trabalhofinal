@@ -518,22 +518,66 @@ void cadastrarEventoFuturo() {
 void cadastrarUsuario() {
     limparTela();
     iconecadastrousuario();
-    char usuario[50], senha[50];
-    FILE *arq = fopen("usuarios.txt", "a");
 
+    char usuario[50], senha[50];
+    FILE *arq;
+
+    // Abre para leitura e verificar duplicidade depois
+    FILE *check = fopen("usuarios.txt", "r");
+    if (!check) {
+        // Se não existir o arquivo ainda, tudo bem.
+        // Ele será criado ao final quando abrirmos com "a".
+    }
+
+    printf(GREEN"\t\t\t\t\t  === CADASTRAR USUARIO ===\n\n"RESET);
+
+    // LEITURA DO USUÁRIO COM LIMITE
+    while (1) {
+        printf("\t\t\t\t\tUsuario (máximo 10 caracteres): ");
+        if (scanf("%49s", usuario) != 1) { limparBuffer(); return; }
+
+        if (strlen(usuario) > 10) {
+            printf(RED"\nO usuário deve ter no máximo 10 caracteres!\n\n"RESET);
+            continue;
+        }
+        break;
+    }
+
+    // VERIFICAR DUPLICIDADE
+    if (check) {
+        char u[50], s[50];
+        while (fscanf(check, "%49s %49s", u, s) == 2) {
+            if (strcmp(u, usuario) == 0) {
+                printf(RED"\nEste usuário já existe! Escolha outro nome.\n"RESET);
+                fclose(check);
+                printf("Pressione ENTER para continuar...");
+                limparBuffer();
+                getchar();
+                return;
+            }
+        }
+        fclose(check);
+    }
+
+    // LEITURA DA SENHA (MÁX 10)
+    while (1) {
+        printf("\t\t\t\t\tSenha (máximo 10 caracteres): ");
+        if (scanf("%49s", senha) != 1) { limparBuffer(); return; }
+
+        if (strlen(senha) > 10) {
+            printf(RED"\nA senha deve ter no máximo 10 caracteres!\n\n"RESET);
+            continue;
+        }
+        break;
+    }
+
+    // SALVAR NO ARQUIVO
+    arq = fopen("usuarios.txt", "a");
     if (!arq) {
         printf(RED"Erro ao abrir o arquivo!\n"RESET);
         pressioneEnter();
         return;
     }
-
-    printf(GREEN"\t\t\t\t\t  === CADASTRAR USUARIO ===\n\n"RESET);
-
-    printf("\t\t\t\t\tUsuario: ");
-    if (scanf("%49s", usuario) != 1) { limparBuffer(); fclose(arq); return; }
-
-    printf("\t\t\t\t\tSenha: ");
-    if (scanf("%49s", senha) != 1) { limparBuffer(); fclose(arq); return; }
 
     fprintf(arq, "%s %s\n", usuario, senha);
     fclose(arq);

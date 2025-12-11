@@ -492,7 +492,7 @@ void cadastrarEventoFuturo() {
     printf("\t\t\t\t5 - 15/12/2025\n");
     printf("\t\t\t\t6 - 16/12/2025\n");
     printf("\t\t\t\t7 - 17/12/2025\n");
-    printf("Dia: ");
+    printf("\t\t\t\tDia: ");
     scanf("%d", &diaEnum);
     getchar();
 
